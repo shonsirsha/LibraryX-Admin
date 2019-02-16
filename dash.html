@@ -1,0 +1,757 @@
+<!doctype html>
+<html class="no-js" lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>LibraryX - Admin Page</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- CSS Dependencies -->
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">        <link rel="stylesheet" href="css/shards.min.css?version=2.0.1">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+        <link rel="stylesheet" href="css/shards-extras.min.css?version=2.0.1">
+        
+        <link rel="stylesheet" href="css/style.css">
+
+    </head>
+    <body onload="loadBooks()"class="shards-landing-page--1">
+      <!-- Welcome Section -->
+      <div class="welcome d-flex justify-content-center flex-column">
+        <div class="container">
+          <!-- Navigation -->
+          <nav class="navbar navbar-expand-lg navbar-dark pt-4 px-0">
+            <a class="navbar-brand" href="#">
+              LibraryX <b>Admin</b>
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+              <ul class="navbar-nav">
+                <li class="nav-item active">
+                  <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#allbooks"><b>All Books</b></a>
+                </li>
+                
+                
+              </ul>
+
+          
+            </div>
+          </nav>
+          <!-- / Navigation -->
+        </div> <!-- .container -->
+
+        <!-- Inner Wrapper -->
+        <div class="inner-wrapper mt-auto mb-auto container">
+          <div class="row">
+            <div class="col-md-7">
+                <h1 class="welcome-heading display-4 text-white">LibraryX | Welcome, Admin.</h1>
+                <p class="text-white">smart, simple, secure library system.</p>
+                <a href="#our-services" class="btn btn-lg btn-outline-white btn-pill align-self-center">Add a Book</a>
+                <a href="#allbooks" class="btn btn-lg btn-white btn-pill align-self-center">All Books</a>
+                <a onclick="logout()" class="btn btn-lg btn-outline-white btn-pill align-self-center">Sign Out</a>
+
+            </div>
+          </div>
+        </div>
+        <!-- / Inner Wrapper -->
+      </div>
+      <!-- / Welcome Section -->
+
+
+      <!-- Contact Section -->
+      <div class="contact section-invert py-4">
+        <h3 class="section-title text-center m-5">Add a member</h3>
+        <div class="container py-4">
+          <div class="row justify-content-md-center px-4">
+            <div class="contact-form col-sm-12 col-md-10 col-lg-7 p-4 mb-4 card">
+              <form>
+                <div class="row">
+                  <div class="col-md-12 col-sm-12">
+                    <div class="form-group">
+                      <label >Full Name</label>
+                      <input type="text" class="form-control" id="fullName" placeholder="Enter full name">
+                    </div>
+                  </div>
+                  <div class="col-md-6 col-sm-12">
+                    <div class="form-group">
+                      <label >Email address</label>
+                      <input type="email" class="form-control" id="email" placeholder="Enter email address">
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-6 col-sm-12">
+                    <div class="form-group">
+                      <label >Password</label>
+                      <input type="password" class="form-control" id="password" placeholder="Enter your password">
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 col-sm-12">
+                    <div class="form-group">
+                      <b><p id="statusAddingMember"></p></b>
+                    </div>
+                  </div>
+
+                  
+                </div>
+                
+                <a onclick="signUp2()" class="white btn btn-outline-primary btn-pill ml-auto mr-auto">Submit</a>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- / Contact Section -->
+
+      <div id="" class="contact section-invert py-4">
+        <h3 class="section-title text-center m-5">Users <!--everything except status del-->
+          <br>
+          <br>
+            <button class="btn btn-default" data-toggle="modal" data-target="#trashUser">See Trash Folder</button>
+
+        </h3>
+            <div class="example col-md-10 ml-auto mr-auto">
+                <div class="card scroll">
+              <table class="table table-striped table-responsive-md">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th><i class="fas fa-user"></i></th>
+                    <th><i class="fas fa-trash"></i></th>
+
+                  </tr>
+                </thead>
+                <tbody id="tblUsers">
+                  <tr>
+                    <th>0</th>
+                    <td>Loading...</td>
+                    <td>Loading...</td>
+                    <td>Loading...</td>
+                    <td>Loading...</td>
+                    
+
+                  </tr>
+                </tbody>
+              </table>
+                </div>
+        </div>
+      </div>
+
+
+       <!-- Contact Section -->
+       <div class="contact section-invert py-4">
+        <h3 class="section-title text-center m-5">Add a book</h3>
+        <div class="container py-4">
+          <div class="row justify-content-md-center px-4">
+            <div class="contact-form col-sm-12 col-md-10 col-lg-7 p-4 mb-4 card">
+              <form>
+                <div class="row">
+                  <div class="col-md-12 col-sm-12">
+                    <div class="form-group">
+                      <label >Book title: *</label>
+                      <input type="text" class="form-control" id="bookTitle" placeholder="Enter title">
+                    </div>
+                  </div>
+                  <div class="col-md-12 col-sm-12">
+                    <div class="form-group">
+                      <label >Author name: *</label>
+                      <input type="text" class="form-control" id="authorName" placeholder="Enter author name">
+                    </div>
+                  </div>
+                  <div class="col-md-12 col-sm-12">
+                    <div class="form-group">
+                      <label >Year released:</label>
+                      <input type="text" class="form-control" id="year" placeholder="Enter Year Released">
+                    </div>
+                  </div>
+                  <div class="col-md-12 col-sm-12">
+                    <div class="form-group">
+                      <label >Genre 1: *</label>
+                      <input type="text" class="form-control" id="genre1" placeholder="Enter genre">
+                    </div>
+                  </div>
+                  <div class="col-md-12 col-sm-12">
+                    <div class="form-group">
+                      <label >Genre 2 (Optional):</label>
+                      <input type="text" class="form-control" id="genre2" placeholder="Enter genre">
+                    </div>
+                  </div>
+                  <div class="col-md-12 col-sm-12">
+                    <div class="form-group">
+                      <label >Genre 3 (Optional):</label>
+                      <input type="text" class="form-control" id="genre3" placeholder="Enter genre">
+                    </div>
+                  </div>
+                  <div class="col-md-12 col-sm-12">
+                    <div class="form-group">
+                      <label >Maximum Period of Borrowing (in days):</label>
+                      <input type="text" value="21" class="form-control" id="max" placeholder="Enter days">
+                    </div>
+                  </div>
+                  <div class="col-md-12 col-sm-12">
+                    <div class="form-group">
+                      <label >Aisle</label>
+                      <input type="text" class="form-control" id="aisle" placeholder="Enter aisle name">
+                    </div>
+                  </div>
+
+                  <div class="col-md-12 col-sm-12">
+                    <div class="form-group">
+                        <label><b>Front Cover Picture Upload: *</b></label>
+                      <br>
+                      <input id="inputImg" onchange="document.getElementById('img-pv').src = window.URL.createObjectURL(this.files[0]);" type="file" accept="image/jpeg, image/png">  
+                      <br>
+                      <br>
+                      <img src="images/noimg.png" id="img-pv" style="width: 100px; height: 120px;"/>
+                    </div>
+                  </div>
+                 
+                  <div class="col-md-12 col-sm-12">
+                    <div class="form-group">
+                      <span id="prgbar" ></span>
+
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 col-sm-12">
+                    <div class="form-group">
+                      <b><p id="statusAddingBook"></p></b>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                 
+                </div>
+                <a onclick="addBook()" class="white btn btn-outline-primary btn-pill ml-auto mr-auto">Submit</a>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- / Contact Section -->
+
+      <div id="allbooks" class="contact section-invert py-4">
+        <h3 class="section-title text-center m-5">Books <!--everything except status del-->
+          <br>
+          <br>
+            <button class="btn btn-default" data-toggle="modal" data-target="#trash">See Trash Folder</button>
+
+        </h3>
+            <div class="example col-md-10 ml-auto mr-auto ">
+              <div class="card scroll">
+              <table id="wholetbl" class="table table-striped table-responsive-md">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Year</th>
+                    <th>Aisle</th>
+                    <th>Status</th>
+                    <th><i class="fas fa-edit"></i></th>
+                    <th><i class="fas fa-history"></i></th>
+                    <th><i class="fas fa-trash"></i></th>
+
+                  </tr>
+                </thead>
+                <tbody id="tbl">
+                  <tr>
+                    <th>0</th>
+                    <td>Loading...</td>
+                    <td>Loading...</td>
+                    <td>Loading...</td>
+                    <td>Loading...</td>
+                    <td>Loading...</td>
+                    <td>Loading...</td>
+                    <td>Loading...</td>
+                    <td>Loading...</td>
+
+                  </tr>
+                </tbody>
+              </table>
+              </div>
+        </div>
+      </div>
+      <!-- Footer Section -->
+      <footer>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+          <div class="container">
+            <a class="navbar-brand" href="#">LibraryX</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="modal fade" id="trash" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-lg" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" >Trash Folder (Books)</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="insideModal2 row">
+                      <div class="card scroll">
+                          <table id="trashTable" class="table table-striped table-responsive-md">
+                              <thead>
+                                <tr>
+                                  <th>#</th>
+                                  <th>Title</th>
+                                  <th><i class="fas fa-edit"></i></th>
+                                  <th><i class="fas fa-history"></i></th>
+                                  <th><i class="fas fa-check"></i></th>
+                                </tr>
+                              </thead>
+                              <tbody id="trashTableContents">
+                                <tr>
+                                  <th>1</th>
+                                  <th>Loading...</th>
+                                  <td>Loading...</td>
+                                  <td>Loading...</td>
+                                  <td>Loading...</td>
+      
+                                </tr>
+                              </tbody>
+                            </table>
+                    </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="modal fade" id="trashUser" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-lg" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" >Trash Folder (Users)</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="insideModal2 row">
+                      <div class="card scroll">
+                      <table id="trashTableUser" class="table table-striped table-responsive-md">
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>Title</th>
+                            <th><i class="fas fa-edit"></i></th>
+                            <th><i class="fas fa-history"></i></th>
+                            <th><i class="fas fa-check"></i></th>
+                          </tr>
+                        </thead>
+                        <tbody id="trashTableUserContents">
+                          <tr>
+                            <th>1</th>
+                            <th>Loading...</th>
+                            <td>Loading...</td>
+                            <td>Loading...</td>
+                            <td>Loading...</td>
+
+                          </tr>
+                        </tbody>
+                      </table>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            <div class="modal fade" id="history" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-lg" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" >Book's History: <u><span id="bookTit"></span></u>
+                      </h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="insideModal2 row">
+                   
+                      <p class="lead" id="statusBookHistory">Loading...</p>
+                      <div class="card scroll">
+                      <table id="historyTable" class="table table-striped table-responsive-md">
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>By</th>
+                            <th>Borrowed</th>
+                            <th>Returned</th>
+                          </tr>
+                        </thead>
+                        <tbody id="historyTableContents">
+                          <tr>
+                            <th>1</th>
+                            <th>None</th>
+                            <td>None</td>
+                            <td>None</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      </div>
+                      
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="modal fade" id="removeUser" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-lg" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" ><span id="userTitDel">Remove User</span>
+                      </h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="insideModal2 row">
+                     <h4>Are you sure you want to remove this user?</h4>
+                     <h5>This user will be moved into the <b>trash</b> folder.</h5><h6><u>You can put it back anytime.</u></h6>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal"><b>Cancel</b></button>
+                      <span id="removeUserBtn"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="modal fade" id="delete" tabindex="-1" role="dialog">
+                  <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" ><span id="bookTitDel">Delete</span>
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="insideModal2 row">
+                       <h4>Are you sure you want to remove this book?</h4>
+                       <h5>This book will be moved into the <b>trash</b> folder.</h5><h6><u>You can put it back anytime.</u></h6>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal"><b>Cancel</b></button>
+                        <span id="removeBtn"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+            <div class="modal fade" id="detailEdit" tabindex="-1" role="dialog">
+              <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" >Edit</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <form class="insideModal">
+                      <div class="row">
+                        
+                        <div class="col-md-6 col-sm-6">
+                          <div class="form-group">
+                            <label >Book title: *</label>
+                            <input type="text" class="form-control" id="bookTitle1" placeholder="Enter title">
+                          </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                          <div class="form-group">
+                            <label >Author name: *</label>
+                            <input type="text" class="form-control" id="authorName1" placeholder="Enter author name">
+                          </div>
+                        </div>
+                      
+                          
+                        <div class="col-md-4 col-sm-4">
+                          <div class="form-group">
+                            <label >Year released:</label>
+                            <input type="text" class="form-control" id="year1" placeholder="Year Released">
+                          </div>
+                        </div>
+                        <div class="col-md-4 col-sm-4">
+                            <div class="form-group">
+                              <label class="small2">Max. Borrowing* (days)</label>
+                              <input type="text" value="21" class="form-control" id="max1" placeholder="Days">
+                            </div>
+                          </div>
+                          <div class="col-md-4 col-sm-4">
+                            <div class="form-group">
+                              <label >Aisle:</label>
+                              <input type="text" class="form-control" id="aisle1" placeholder="Aisle name">
+                            </div>
+                          </div>
+                        <div class="col-md-4 col-sm-4">
+                          <div class="form-group">
+                            <label >Genre 1: *</label>
+                            <input type="text" class="form-control" id="genre11" placeholder="Enter genre">
+                          </div>
+                        </div>
+                        <div class="col-md-4 col-sm-4">
+                          <div class="form-group">
+                            <label >Genre 2:</label>
+                            <input type="text" class="form-control" id="genre21" placeholder="Enter genre">
+                          </div>
+                        </div>
+                        <div class="col-md-4 col-sm-4">
+                          <div class="form-group">
+                            <label >Genre 3:</label>
+                            <input type="text" class="form-control" id="genre31" placeholder="Enter genre">
+                          </div>
+                        </div>
+                        <div class="col-md-12 col-sm-12">
+                            <div class="form-group">
+                              <label>Last borrowed by:</label>
+                              <input type="text" class="form-control" id="lastBorrowedBy1" placeholder="" value="Sean Saoirse Leo Liesanggoro" readonly>
+                            </div>
+                          </div>
+                          
+                        <div class="col-md-6 col-sm-4">
+                            <div class="form-group">
+                                <label>Borrowed on:</label>
+                                <input type="text" class="form-control" id="borrowedOn1" placeholder="" value="Mon, 11 Jan 19" readonly>
+                            </div>
+                          </div>
+                          <div class="col-md-6 col-sm-4">
+                            <div class="form-group">
+                                <label>Returned on:</label>
+                                <input type="text" class="form-control" id="returnedOn1" placeholder="" value="Wed, 13 Jan 19" readonly>
+                              </div>
+                          </div>
+
+                       
+      
+                        <div class="col-md-12 col-sm-12">
+                          <div class="form-group">
+                            
+                            <img src="images/noimg.png" id="img-pv1" style="width: 100px; height: 140px;"/>
+                          </div>
+                        </div>
+                       
+                        
+      
+                          <div class="col-12">
+                                <p><span id="status"></span></p>
+                          </div>
+                      </div>
+                      <div class="row">
+                       
+                      </div>
+                    </form>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <span id="applyBtn"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal fade" id="detailEditUser" tabindex="-1" role="dialog">
+              <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" >Edit User</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <form class="insideModal">
+                      <div class="row">
+                        
+                        <div class="col-12">
+                          <div class="form-group">
+                            <label >Full Name: *</label>
+                            <input type="text" class="form-control" id="fullName1" placeholder="Enter full name">
+                          </div>
+                        </div>
+                        <div class="col-12">
+                          <div class="form-group">
+                            <label >Email: *</label>
+                            <input type="email" class="form-control" id="email1" placeholder="Enter email address">
+                          </div>
+                        </div>
+                      
+                          
+                        <div class="col-12">
+                          <div class="form-group">
+                            <label >Password: *</label>
+                            <input type="password" class="form-control" id="password1" placeholder="Must at least be 7 characters long and contains both letter(s) and number(s)">
+                            <span id="applyEditUserBtn"></span>
+                            <br>
+                            <span class="mrgtop" id="statusEditUser"></span>
+                          </div>
+                        </div>
+
+                        
+
+                          <div class="col-6">
+                          </div>
+                          
+                      </div>
+                      <div id="userHistoryPlcHolder">
+                      </div>
+                      
+                    </form>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <span id="showUserHistoryBtn"></span>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <div class="modal fade" id="detail" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-lg" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" >Book Detail</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <form class="insideModal">
+                        <div class="row">
+                            
+                          <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                              <label >Book title: *</label>
+                              <input type="text" readonly class="form-control" id="bookTitle2" placeholder="Enter title">
+                            </div>
+                          </div>
+                          <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                              <label >Author name: *</label>
+                              <input type="text" readonly class="form-control" id="authorName2" placeholder="Enter author name">
+                            </div>
+                          </div>
+                          <div class="col-md-4 col-sm-4">
+                              <div class="form-group">
+                                <label >Year released:</label>
+                                <input type="text" class="form-control" readonly id="year2" placeholder="Year Released">
+                              </div>
+                            </div>
+                            <div class="col-md-4 col-sm-4">
+                                <div class="form-group">
+                                  <label class="small2">Max. Borrowing* (days)</label>
+                                  <input type="text" value="21" class="form-control" id="max2" readonly placeholder="Days">
+                                </div>
+                              </div>
+                              <div class="col-md-4 col-sm-4">
+                                <div class="form-group">
+                                  <label >Aisle:</label>
+                                  <input type="text" class="form-control" id="aisle2" readonly placeholder="Aisle name">
+                                </div>
+                              </div>
+                          <div class="col-md-4 col-sm-4">
+                              <div class="form-group">
+                                <label >Genre 1: *</label>
+                                <input type="text" class="form-control" readonly id="genre12" placeholder="Enter genre">
+                              </div>
+                            </div>
+                            <div class="col-md-4 col-sm-4">
+                              <div class="form-group">
+                                <label >Genre 2:</label>
+                                <input type="text" class="form-control" readonly id="genre22" placeholder="Enter genre">
+                              </div>
+                            </div>
+                            <div class="col-md-4 col-sm-4">
+                              <div class="form-group">
+                                <label >Genre 3:</label>
+                                <input type="text" class="form-control" readonly id="genre32" placeholder="Enter genre">
+                              </div>
+                            </div>
+                          <div class="col-12">
+                              <div class="form-group">
+                                <label>Currently borrowed by:</label>
+                                <input type="text" class="form-control" id="currentlyBorrowedBy2" placeholder="" value="Sean Saoirse Leo Liesanggoro" readonly>
+                              </div>
+                            </div>
+                            <div class="col-6">
+                              <div class="form-group">
+                                  <label>Borrowed on:</label>
+                                  <input type="text" class="form-control" id="borrowedOn2" placeholder="" value="Mon, 11 Jan 19" readonly>
+                              </div>
+                            </div>
+                            <div class="col-6">
+                              <div class="form-group">
+                                  <label>Should return BEFORE or ON:</label>
+                                  <input type="text" class="form-control" id="returnedOn2" placeholder="" value="Wed, 13 Jan 19" readonly>
+                                </div>
+                            </div>                                                    
+                          <div class="col-md-12 col-sm-12">
+                            <div class="form-group">
+                             
+                              <br>
+                              <img src="images/loading.gif" id="img-pv2" style="width: 100px; height: 120px;"/>
+                            </div>
+                            </div>
+
+                            
+
+
+                        </div>
+                        <div class="row">
+                         
+                        </div>
+                      </form>
+
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+              
+
+            </div>
+          </div>
+
+
+
+          </div>
+        </nav>
+      </footer>
+     
+  <script src="https://www.gstatic.com/firebasejs/5.8.0/firebase.js"></script>
+  <script src="js/firebase.js"></script> 
+      <!-- JavaScript Dependencies -->
+      <script src="js/app.js"></script> 
+      <script>
+        firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+        } else {
+          window.location.replace('signin.html');
+        }
+      })
+      </script>
+
+
+      <!-- JavaScript Dependencies -->
+      <script src="js/jquery.min.js"></script>
+      <script src="js/popper.min.js"></script>
+      <script src="js/bootstrap.min.js"></script>
+    </body>
+</html>

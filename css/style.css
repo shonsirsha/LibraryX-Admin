@@ -41,6 +41,10 @@
     max-width: 50% !important;
 }
 
+.modal-lg2 {
+    max-width: 70% !important;
+}
+
 .unavail{
     background-color: rgb(181, 24, 24);
 }
@@ -57,4 +61,21 @@
     max-height: 500px;
     overflow-y: auto;
     overflow-x: hidden;
+}
+
+.scroll2{
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.mrgrt{
+    margin-right: 10px;
+}
+
+html {
+    scroll-behavior: smooth;
+  }
+
+.white{
+    color: #ffffff;
 }

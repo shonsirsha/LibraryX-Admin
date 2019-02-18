@@ -288,12 +288,12 @@ function loadBooks(){
       if (x.status == "avail"){
         
         x.status = "<kbd class='avail'>AVAILABLE</kbd>"
-        table.innerHTML = '<tr><td>'+y+'</td><td><b>'+x.bookTitle+'</b></td><td>'+x.authorName+'</td><td>'+x.year+'</td><td>'+x.availAt+'</td><td class="av"><b>'+x.status+'</b></td><td><button type="button" class="btn btn-primary" data-toggle="modal" onclick="detailEdit('+x.image+')" data-target="#detailEdit"><b>Detail / Edit</b></button></td><td><button type="button" class="btn btn-outline-primary" data-toggle="modal" onclick="seeHistory('+x.image+')" data-target="#history"><b>History</b></button></td><td><button type="button" class="btn btn-danger" data-toggle="modal" onclick="deleteBookShowModal('+x.image+')" data-target="#delete"><b>X</b></button></td></tr>' + table.innerHTML;
+        table.innerHTML = '<tr><td>'+y+'</td><td><b>'+x.bookTitle+'</b></td><td>'+x.authorName+'</td><td>'+x.year+'</td><td class="av"><b>'+x.status+'</b></td><td><button type="button" class="btn btn-primary" data-toggle="modal" onclick="detailEdit('+x.image+')" data-target="#detailEdit"><b>Detail / Edit</b></button></td><td><button type="button" class="btn btn-outline-primary" data-toggle="modal" onclick="seeHistory('+x.image+')" data-target="#history"><b>History</b></button></td><td><button type="button" class="btn btn-warning" data-toggle="modal" onclick="seeReports('+x.image+')" data-target="#reports"><b>Reports</b></td><td><button type="button" class="btn btn-danger" data-toggle="modal" onclick="deleteBookShowModal('+x.image+')" data-target="#delete"><b>X</b></button></td></tr>' + table.innerHTML;
 
       }else{
         
         x.status = "<kbd class='unavail' >BORROWED</kbd>"
-        table.innerHTML = '<tr><td>'+y+'</td><td><b>'+x.bookTitle+'</b></td><td>'+x.authorName+'</td><td>'+x.year+'</td><td>'+x.availAt+'</td><td class="uv"><b>'+x.status+'</b></td><td><button type="button" class="btn btn-success" data-toggle="modal" onclick="seeDetail('+x.image+')" data-target="#detail"><b>Detail</b></button></td><td><button type="button" class="btn btn-outline-primary" data-toggle="modal" onclick="seeHistory('+x.image+')" data-target="#history"><b>History</b></button></td><td><button type="button" class="btn btn-danger" disabled><b>X</b></button></td></tr>' + table.innerHTML;
+        table.innerHTML = '<tr><td>'+y+'</td><td><b>'+x.bookTitle+'</b></td><td>'+x.authorName+'</td><td>'+x.year+'</td><td class="uv"><b>'+x.status+'</b></td><td><button type="button" class="btn btn-success" data-toggle="modal" onclick="seeDetail('+x.image+')" data-target="#detail"><b>Detail</b></button></td><td><button type="button" class="btn btn-outline-primary" data-toggle="modal" onclick="seeHistory('+x.image+')" data-target="#history"><b>History</b></button></td><td><button type="button" class="btn btn-warning" data-toggle="modal" onclick="seeReports('+x.image+')" data-target="#reports"><b>Reports</b></td><td><button type="button" class="btn btn-danger" disabled><b>X</b></button></td></tr>' + table.innerHTML;
       
       }
 
@@ -416,7 +416,48 @@ function putBackUser(uid){
 }
 
 
+function seeReports(bookTitleInMS){
+  var bookTitle = document.getElementById('reportBookTit');
+  var wholeTable = document.getElementById('reportsTable');
+  var table = document.getElementById('reportsTableContents');
+  var status = document.getElementById('statusBookReport');
+  table.innerHTML = ""
+  refBooks.orderByChild("image").equalTo(bookTitleInMS).once('value', snapshot=>{
+    var bookKey = Object.keys(snapshot.val())[0];
 
+    snapshot.forEach(childSnapshot=>{
+      var book = childSnapshot.val();
+      bookTitle.innerHTML = book.bookTitle;
+    });
+
+    refBooks.child(bookKey).child("reports").orderByChild("bookImgTitleInMS").equalTo(bookTitleInMS).on('value', snapshot=>{
+      if(snapshot.exists()){
+      status.style.display = "none";
+      wholeTable.style.display = "block";
+
+      table.innerHTML = ""
+      var y = 1
+
+      snapshot.forEach(childSnapshot=>{
+          var report = childSnapshot.val();      
+
+          
+            table.innerHTML = '<td>'+y+'</td><td>'+getDate(report.reportTime)+'</td><td>'+report.fullName+'</td><td>'+report.report+'</td>' + table.innerHTML
+          
+          y += 1;
+
+      });
+
+      }else{
+      wholeTable.style.display = "none";
+      status.style.display = "block";
+      status.innerHTML = "No report is available for this book."
+      }
+    })
+
+  })
+
+}
 
 function seeHistory(bookTitleInMS){
   var bookTitle = document.getElementById('bookTit');
@@ -425,13 +466,11 @@ function seeHistory(bookTitleInMS){
   var status = document.getElementById('statusBookHistory');
   table.innerHTML = ""
 
-  refBooks.orderByChild("image").equalTo(bookTitleInMS).on('value', snapshot =>{
+  refBooks.orderByChild("image").equalTo(bookTitleInMS).once('value', snapshot =>{
     var bookKey = Object.keys(snapshot.val())[0];
     snapshot.forEach(childSnapshot=>{
       var book = childSnapshot.val();
       bookTitle.innerHTML = book.bookTitle;
-
-      
     });
 
     refBooks.child(bookKey).child("history").orderByChild("actualReturned").on('value', snapshot=>{
@@ -446,9 +485,9 @@ function seeHistory(bookTitleInMS){
         var history = childSnapshot.val();      
 
           if(history.start == history.actualReturned){
-            table.innerHTML = '<td>'+y+'</td><td>'+history.fullname+'</td><td>'+getDate(history.start)+'</td><td><b>CURRENTLY BORROWING, RETURN <u>BEFORE</u> OR <u>ON</u></b> '+getDate(history.until)+'</td>' + table.innerHTML
+            table.innerHTML = '<td>'+y+'</td><td>'+history.fullname+'</td><td><kbd class="unavail">BORROWING</td></td><td>'+getDate(history.start)+'</td><td><b>CURRENTLY BORROWING, RETURN <u>BEFORE</u> OR <u>ON</u></b> '+getDate(history.until)+'</td><td> - </td>' + table.innerHTML
           }else{
-            table.innerHTML = '<td>'+y+'</td><td>'+history.fullname+'</td><td>'+getDate(history.start)+'</td><td>'+getDate(history.actualReturned)+'</td>' + table.innerHTML
+            table.innerHTML = '<td>'+y+'</td><td>'+history.fullname+'</td><td><kbd class="avail">RETURNED</td><td>'+getDate(history.start)+'</td><td>'+getDate(history.until)+'</td><td>'+getDate(history.actualReturned)+'</td>' + table.innerHTML
           }
           y += 1;
 
@@ -709,7 +748,7 @@ function detailEditUser(uid){
 function showUserHistory(uid){
   
   var userHistoryPlcHolder = document.getElementById('userHistoryPlcHolder');
-  userHistoryPlcHolder.innerHTML = '<h4>User\'s History (Activites): </h4><div class="card scroll"><table class="table table-striped table-responsive-md"><thead><tr><th>#</th><th>Title</th><th>Status</th><th>Date Borrowed</th><th>Date Returned</th></tr></thead><tbody id="userHistoryTableContents"><tr><td>Loading...</td><td>Loading...</td><td>Loading...</td><td>Loading...</td><td>Loading...</td></tr></tbody></table></div>'
+  userHistoryPlcHolder.innerHTML = '<h4>User\'s History (Activites): </h4><div class="card scroll"><table class="table table-striped table-responsive-md"><thead><tr><th>#</th><th>Title</th><th>Status</th><th>Date Borrowed</th><th>Date Should Return</th><th>Date Actual Returned</th></tr></thead><tbody id="userHistoryTableContents"><tr><td>Loading...</td><td>Loading...</td><td>Loading...</td><td>Loading...</td><td>Loading...</td><td>Loading...</td></tr></tbody></table></div>'
   var history = document.getElementById('userHistoryTableContents');
   history.innerHTML = '';
   refUsers.child(uid).child('mybooks').orderByChild('actualReturned').on('value', snapshot=>{
@@ -720,10 +759,10 @@ function showUserHistory(uid){
         var x = childSnapshot.val()
         if(x.status == "returned"){
           x.status = "<kbd class='avail'>RETURNED</kbd>"
-          history.innerHTML = '<tr><td>'+z+'</td><td>'+x.title+'</td><td>'+x.status+'</td><td>'+getDate(x.start)+'</td><td>'+getDate(x.actualReturned)+'</td></tr>' + history.innerHTML;
+          history.innerHTML = '<tr><td>'+z+'</td><td>'+x.title+'</td><td>'+x.status+'</td><td>'+getDate(x.start)+'</td><td>'+getDate(x.until)+'</td><td>'+getDate(x.actualReturned)+'</td></tr>' + history.innerHTML;
         }else{
           x.status = "<kbd class='borrow'>BORROWING</kbd>"
-          history.innerHTML = '<tr><td>'+z+'</td><td>'+x.title+'</td><td>'+x.status+'</td><td>'+getDate(x.start)+'</td><td><b>CURRENTLY BORROWING, RETURN <u>BEFORE</u> OR <u>ON</u></b> '+getDate(x.until)+'</td></tr>' + history.innerHTML;
+          history.innerHTML = '<tr><td>'+z+'</td><td>'+x.title+'</td><td>'+x.status+'</td><td>'+getDate(x.start)+'</td><td><b>CURRENTLY BORROWING, RETURN <u>BEFORE</u> OR <u>ON</u></b> '+getDate(x.until)+'</td><td>-</td></tr>' + history.innerHTML;
         }
         
         z-= 1
@@ -758,9 +797,36 @@ function editUser(uid){
           email: inputEmail.value,
           password: inputPw.value
         }).then(()=>{
-        
-          status.innerHTML = "<p class='mrgtop2'>User has been edited successfully</p>"
-        
+            refBooks.orderByChild('borrowedBy').once('value', snapshot=>{
+              snapshot.forEach(childSnapshot=>{
+                refBooks.child(childSnapshot.key).child('history').orderByChild('borrowedBy').equalTo(uid).once('value', snapshot2=>{
+                  snapshot2.forEach(childSnapshot2=>{
+                    refBooks.child(childSnapshot.key).child('history').child(childSnapshot2.key).update({
+                      fullname: inputFname.value
+                    }).then(()=>{
+                      refBooks.child(childSnapshot.key).child('reports').orderByChild('reportedBy').equalTo(uid).once('value', snapshot3=>{
+                        if(snapshot3.exists()){
+                          snapshot3.forEach(childSnapshot3=>{
+                            refBooks.child(childSnapshot.key).child('reports').child(childSnapshot3.key).update({
+                              fullName: inputFname.value
+                            }).then(()=>{
+                              status.innerHTML = "<p class='mrgtop2'>User has been edited successfully</p>"
+                            }).catch(()=>{
+                              status.innerHTML = "<p class='mrgtop2'>There was en error. Please try again.</p>"
+                            })
+                          })
+                        }else{
+                          status.innerHTML = "<p class='mrgtop2'>User has been edited successfully</p>"
+                        }
+                      })
+                    }).catch(()=>{
+                      status.innerHTML = "<p class='mrgtop2'>There was en error. Please try again.</p>"
+                    })
+                  })
+                })
+              })
+            })
+
         }).catch(()=>{
           status.innerHTML = "<p class='mrgtop2'>There was en error. Please try again.</p>"
           console.log("AAAA")
@@ -810,9 +876,13 @@ function getDate(dateInMS){
   var year = date.getFullYear();
   var month = date.getMonth() + 1;
   var day = date.getDate();
-  var hours = date.getHours();
+  
+  var mo = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  return day + " " + mo[month-1] + " " + year;
+
+  /*var hours = date.getHours();
   var minutes = date.getMinutes();
   var seconds = date.getSeconds();
   var mo = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  return day + " " + mo[month-1] + " " + year + ", " + hours + ":" + minutes;
+return day + " " + mo[month-1] + " " + year + ", " + hours + ":" + minutes;*/
 }

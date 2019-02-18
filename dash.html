@@ -34,10 +34,21 @@
                 </li>
                 <li class="nav-item">
                   <a class="nav-link" href="#allbooks"><b>All Books</b></a>
+
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#allmembers"><b>All Members</b></a>
                 </li>
                 
                 
               </ul>
+
+              <ul class="navbar-nav ml-auto">
+                  <li class="nav-item">
+                    <a onclick="logout()" href="#" class="nav-link">Sign Out</a>
+                  </li>
+                  
+                </ul>
 
           
             </div>
@@ -51,9 +62,9 @@
             <div class="col-md-7">
                 <h1 class="welcome-heading display-4 text-white">LibraryX | Welcome, Admin.</h1>
                 <p class="text-white">smart, simple, secure library system.</p>
-                <a href="#our-services" class="btn btn-lg btn-outline-white btn-pill align-self-center">Add a Book</a>
-                <a href="#allbooks" class="btn btn-lg btn-white btn-pill align-self-center">All Books</a>
-                <a onclick="logout()" class="btn btn-lg btn-outline-white btn-pill align-self-center">Sign Out</a>
+                <a href="#addabook" class="btn btn-lg btn-outline-white btn-pill align-self-center mrgrt">Add a Book</a>
+                <a href="#addmember" class="btn btn-lg btn-white btn-pill align-self-center">Add a Member</a>
+
 
             </div>
           </div>
@@ -64,7 +75,7 @@
 
 
       <!-- Contact Section -->
-      <div class="contact section-invert py-4">
+      <div id="addmember" class="contact section-invert py-4">
         <h3 class="section-title text-center m-5">Add a member</h3>
         <div class="container py-4">
           <div class="row justify-content-md-center px-4">
@@ -101,6 +112,7 @@
                 </div>
                 
                 <a onclick="signUp2()" class="white btn btn-outline-primary btn-pill ml-auto mr-auto">Submit</a>
+                <a href="#allmembers" class="white btn btn-primary btn-pill ml-auto mr-auto">See all members</a>
               </form>
             </div>
           </div>
@@ -108,11 +120,12 @@
       </div>
       <!-- / Contact Section -->
 
-      <div id="" class="contact section-invert py-4">
-        <h3 class="section-title text-center m-5">Users <!--everything except status del-->
+      <div id="allmembers" class="contact section-invert py-4">
+        <h3 class="section-title text-center m-5">Members <!--everything except status del-->
           <br>
           <br>
-            <button class="btn btn-default" data-toggle="modal" data-target="#trashUser">See Trash Folder</button>
+            <button class="btn btn-default" data-toggle="modal" data-target="#trashUser">See trash folder</button>
+            <a href="#addmember"><button class="btn btn-outline-default">Add a member</button></a>
 
         </h3>
             <div class="example col-md-10 ml-auto mr-auto">
@@ -146,7 +159,7 @@
 
 
        <!-- Contact Section -->
-       <div class="contact section-invert py-4">
+       <div id="addbook"class="contact section-invert py-4">
         <h3 class="section-title text-center m-5">Add a book</h3>
         <div class="container py-4">
           <div class="row justify-content-md-center px-4">
@@ -230,6 +243,8 @@
                  
                 </div>
                 <a onclick="addBook()" class="white btn btn-outline-primary btn-pill ml-auto mr-auto">Submit</a>
+                <a href="#allbooks" class="white btn btn-primary btn-pill ml-auto mr-auto">See all books</a>
+
               </form>
             </div>
           </div>
@@ -241,11 +256,12 @@
         <h3 class="section-title text-center m-5">Books <!--everything except status del-->
           <br>
           <br>
-            <button class="btn btn-default" data-toggle="modal" data-target="#trash">See Trash Folder</button>
+            <button class="btn btn-default" data-toggle="modal" data-target="#trash">See trash folder</button>
+            <a href="#addbook"><button class="btn btn-default">Add a book</button></a>
 
         </h3>
             <div class="example col-md-10 ml-auto mr-auto ">
-              <div class="card scroll">
+              <div class="card scroll2">
               <table id="wholetbl" class="table table-striped table-responsive-md">
                 <thead>
                   <tr>
@@ -253,10 +269,10 @@
                     <th>Title</th>
                     <th>Author</th>
                     <th>Year</th>
-                    <th>Aisle</th>
                     <th>Status</th>
                     <th><i class="fas fa-edit"></i></th>
                     <th><i class="fas fa-history"></i></th>
+                    <th><i class="fas fa-exclamation-triangle"></i></th>
                     <th><i class="fas fa-trash"></i></th>
 
                   </tr>
@@ -272,7 +288,6 @@
                     <td>Loading...</td>
                     <td>Loading...</td>
                     <td>Loading...</td>
-
                   </tr>
                 </tbody>
               </table>
@@ -287,6 +302,46 @@
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
             </button>
+
+            <div class="modal fade" id="reports" tabindex="-1" role="dialog">
+              <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" >Reports for <u><span id="reportBookTit"></span></u></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="insideModal2 row">
+                      <p class="lead" id="statusBookReport">Loading...</p>
+                    <div class="card scroll">
+                        <table id="reportsTable" class="table table-striped table-responsive-md">
+                            <thead>
+                              <tr>
+                                <th>#</th>
+                                <th>Submitted Date</th>
+                                <th>By</th>
+                                <th>Message</th>
+                               
+                              </tr>
+                            </thead>
+                            <tbody id="reportsTableContents">
+                              <tr>
+                                <td>1</td>
+                                <td>Loading...</td>
+                                <td>Loading...</td>
+                                <td>Loading...</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                  </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <div class="modal fade" id="trash" tabindex="-1" role="dialog">
                 <div class="modal-dialog modal-lg" role="document">
@@ -371,10 +426,10 @@
               </div>
 
             <div class="modal fade" id="history" tabindex="-1" role="dialog">
-                <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-dialog modal-lg2" role="document">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <h5 class="modal-title" >Book's History: <u><span id="bookTit"></span></u>
+                      <h5 class="modal-title" >History for <u><span id="bookTit"></span></u>
                       </h5>
                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -389,16 +444,22 @@
                           <tr>
                             <th>#</th>
                             <th>By</th>
-                            <th>Borrowed</th>
-                            <th>Returned</th>
+                            <th>Status</th>
+                            <th>Date Borrowed</th>
+                            <th>Date Should Return</th>
+                            <th>Date Actual Returned</th>
+
                           </tr>
                         </thead>
                         <tbody id="historyTableContents">
                           <tr>
-                            <th>1</th>
-                            <th>None</th>
+                            <td>1</td>
+                            <td>None</td>
+                            <td></td>
                             <td>None</td>
                             <td>None</td>
+                            <td>None</td>
+
                           </tr>
                         </tbody>
                       </table>
@@ -566,7 +627,7 @@
             </div>
 
             <div class="modal fade" id="detailEditUser" tabindex="-1" role="dialog">
-              <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-dialog modal-lg2" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
                     <h5 class="modal-title" >Edit User</h5>

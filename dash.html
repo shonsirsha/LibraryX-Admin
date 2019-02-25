@@ -5,6 +5,7 @@
         <meta http-equiv="x-ua-compatible" content="ie=edge">
         <title>LibraryX - Admin Page</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script type="text/javascript" src="js/qrious.min.js"></script>
 
         <!-- CSS Dependencies -->
         <link rel="stylesheet" href="css/bootstrap.min.css">
@@ -164,7 +165,7 @@
         <div class="container py-4">
           <div class="row justify-content-md-center px-4">
             <div class="contact-form col-sm-12 col-md-10 col-lg-7 p-4 mb-4 card">
-              <form>
+              <form id="addBookForm">
                 <div class="row">
                   <div class="col-md-12 col-sm-12">
                     <div class="form-group">
@@ -294,6 +295,96 @@
               </div>
         </div>
       </div>
+
+      <div id="addEbook"class="contact section-invert py-4">
+          <h3 class="section-title text-center m-5">Add an eBook</h3>
+          <div class="container py-4">
+            <div class="row justify-content-md-center px-4">
+              <div class="contact-form col-sm-12 col-md-10 col-lg-7 p-4 mb-4 card">
+                <form id="addEbookForm">
+                  <div class="row">
+                    <div class="col-md-12 col-sm-12">
+                      <div class="form-group">
+                        <label >Book title: *</label>
+                        <input type="text" class="form-control" id="bookTitle3" placeholder="Enter title">
+                      </div>
+                    </div>
+                    <div class="col-md-12 col-sm-12">
+                      <div class="form-group">
+                        <label >Author name: *</label>
+                        <input type="text" class="form-control" id="authorName3" placeholder="Enter author name">
+                      </div>
+                    </div>
+                    <div class="col-md-12 col-sm-12">
+                      <div class="form-group">
+                        <label >Year released:</label>
+                        <input type="text" class="form-control" id="year3" placeholder="Enter Year Released">
+                      </div>
+                    </div>
+                    <div class="col-md-12 col-sm-12">
+                      <div class="form-group">
+                        <label >Genre 1: *</label>
+                        <input type="text" class="form-control" id="genre13" placeholder="Enter genre">
+                      </div>
+                    </div>
+                    <div class="col-md-12 col-sm-12">
+                      <div class="form-group">
+                        <label >Genre 2 (Optional):</label>
+                        <input type="text" class="form-control" id="genre23" placeholder="Enter genre">
+                      </div>
+                    </div>
+                    <div class="col-md-12 col-sm-12">
+                      <div class="form-group">
+                        <label >Genre 3 (Optional):</label>
+                        <input type="text" class="form-control" id="genre33" placeholder="Enter genre">
+                      </div>
+                    </div>
+                    <div class="col-md-12 col-sm-12">
+                      <div class="form-group">
+                          <label><b>Front Cover Picture Upload: *</b></label>
+                        <br>
+                        <input id="inputImg3" onchange="document.getElementById('img-pv3').src = window.URL.createObjectURL(this.files[0]);" type="file" accept="image/jpeg, image/png">  
+                        <br>
+                        <br>
+                        <img src="images/noimg.png" id="img-pv3" style="width: 100px; height: 120px;"/>
+                      </div>
+                    </div>
+
+                    <div class="col-md-12 col-sm-12">
+                        <div class="form-group">
+                            <label><b>Upload book (.pdf only): *</b></label>
+                          <br>
+                          <input id="inputPdf" onchange="document.getElementById('img-pv4').src = 'images/pdf.png'" type="file" accept="application/pdf">  
+                          <br>
+                          <br>
+                          <img src="images/nopdf.png" id="img-pv4" style="width: 100px; height: 120px;"/>
+                        </div>
+                      </div>
+                   
+                    <div class="col-md-12 col-sm-12">
+                      <div class="form-group">
+                        <span id="prgbar3" ></span>
+  
+                      </div>
+                    </div>
+  
+                    <div class="col-md-6 col-sm-12">
+                      <div class="form-group">
+                        <b><p id="statusAddingBook2"></p></b>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                   
+                  </div>
+                  <a onclick="addEbook()" class="white btn btn-outline-primary btn-pill ml-auto mr-auto">Submit</a>
+                  <a href="#allbooks" class="white btn btn-primary btn-pill ml-auto mr-auto">See all books</a>
+  
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
       <!-- Footer Section -->
       <footer>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -601,10 +692,23 @@
 
                        
       
-                        <div class="col-md-12 col-sm-12">
+                        <div class="col-6">
                           <div class="form-group">
-                            
-                            <img src="images/noimg.png" id="img-pv1" style="width: 100px; height: 140px;"/>
+                              <img src="images/noimg.png" class="mrgbtm" id="img-pv1" style="width: 100px; height: 140px;"/>
+                            <div>
+                                <canvas id="qr" class="mrgbtm"></canvas>
+                            </div>
+                            <div>
+                                <a class="btn btn-success" id="downloadQrBtn"><span class="white smol">Download QR code</span></a>
+                            </div>
+
+                           
+
+                          </div>
+
+                          <div class="col-6">
+                            <div class="form-group">
+                            </div>
                           </div>
                         </div>
                        
@@ -665,6 +769,12 @@
                         
 
                           <div class="col-6">
+                              <div>
+                                  <canvas id="qr3" class="mrgbtm"></canvas>
+                                </div>
+                                <div>
+                                  <a class="btn btn-success" id="downloadQrBtn3"><span class="white smol">Download QR code</span></a>
+                                </div>
                           </div>
                           
                       </div>
@@ -762,10 +872,19 @@
                             </div>                                                    
                           <div class="col-md-12 col-sm-12">
                             <div class="form-group">
-                             
-                              <br>
-                              <img src="images/loading.gif" id="img-pv2" style="width: 100px; height: 120px;"/>
-                            </div>
+                              <img src="images/noimg.png" class="mrgbtm" id="img-pv2" style="width: 100px; height: 140px;"/>
+                            <div>
+                                <canvas id="qr2" class="mrgbtm"></canvas>
+                              </div>
+                              <div>
+                                <a class="btn btn-success" id="downloadQrBtn2"><span class="white smol">Download QR code</span></a>
+                              </div>
+                               
+                            
+
+                           
+
+                          </div>
                             </div>
 
                             

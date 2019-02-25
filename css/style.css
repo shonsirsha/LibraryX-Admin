@@ -79,3 +79,7 @@ html {
 .white{
     color: #ffffff;
 }
+
+.smol{
+    font-size: 13px;
+}

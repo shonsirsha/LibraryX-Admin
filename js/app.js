@@ -1,6 +1,7 @@
 const refAdmin = firebase.database().ref('admins');
 const refUsers = firebase.database().ref('users');
 const refBooks = firebase.database().ref('books');
+const refEbooks = firebase.database().ref('ebooks');
 
 const fStorage = firebase.storage();
 
@@ -149,7 +150,7 @@ function signUp2(){
 
 
 
-  if(email != "" && fullName != ""){
+  if(email != "" && fullName != "" && password.length >= 7 && isNaN(password) == true){
     statusAddingMember.innerHTML = "Adding member..."
     firebase.auth().createUserWithEmailAndPassword(email, password).then(function(user) {
       var user = firebase.auth().currentUser;
@@ -158,7 +159,8 @@ function signUp2(){
         email: email,
         fullName: fullName,
         uid : uid,
-        password: password
+        password: password,
+        createdAt: Date.now()
       });
 
       statusAddingMember.innerHTML = "Member added successfully!"
@@ -185,7 +187,7 @@ function signUp2(){
   
   
   }else{
-    alert("HECK!")
+    statusAddingMember.innerHTML = "Input(s) must be filled correctly."
   }
  
 }
@@ -200,6 +202,8 @@ function addBook(){
   var inputImg = document.getElementById('inputImg').files[0];
   var max = document.getElementById('max').value;
   var aisle = document.getElementById('aisle').value;
+  var imgPv = document.getElementById('img-pv');
+  var addBookForm = document.getElementById('addBookForm')
 
   var statusAddingBook = document.getElementById('statusAddingBook');
   var prgBar = document.getElementById('prgbar');
@@ -214,9 +218,9 @@ function addBook(){
     var uploadTask = storageRef.put(inputImg);
 
     uploadTask.on('state_changed', function(snapshot){
-      var prgBar = document.getElementById('prgbar');
       var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
       progress = Math.round(progress);
+      console.log(progress)
       prgBar.innerHTML = '<div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: '+progress+'%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>';
     
       statusAddingBook.innerHTML = 'Uploading ... ('+progress+'% done)';
@@ -250,8 +254,139 @@ function addBook(){
           availAt: aisle,
           borrowedBy: "none"
         })
-    
+        
+        addBookForm.reset()
+        imgPv.src = "images/noimg.png"
+        prgBar.innerHTML = ""
+
         statusAddingBook.innerHTML = "A new book has been successfully added to the system."
+
+      });  
+       
+    
+    });
+
+
+  }else{
+    statusAddingBook.innerHTML = "Please fill all required fields (*)"
+
+  }
+
+
+}
+
+
+function addEbook(){
+  var bookTitle = document.getElementById('bookTitle3').value;
+  var authorName = document.getElementById('authorName3').value;
+  var year = document.getElementById('year3').value;
+  var genre1 = document.getElementById('genre13').value;
+  var genre2 = document.getElementById('genre23').value;
+  var genre3 = document.getElementById('genre33').value;
+  var inputImg = document.getElementById('inputImg3').files[0];
+  var inputPdf = document.getElementById('inputPdf').files[0];
+  var imgPv = document.getElementById('img-pv3');
+  var addEbookForm = document.getElementById('addEbookForm')
+
+  var statusAddingBook = document.getElementById('statusAddingBook2');
+  var prgBar = document.getElementById('prgbar3');
+
+  if(year == ""){
+    year = "Unknown"
+  }
+
+  if(bookTitle != "" && authorName != "" && genre1 != "" && inputImg != null){
+    var dateNow = Date.now()
+    var storageRef = fStorage.ref('eBooks/' + dateNow);
+    var uploadTask = storageRef.put(inputPdf);
+
+    uploadTask.on('state_changed', function(snapshot){
+      var prgBar = document.getElementById('prgbar3');
+      var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      progress = Math.round(progress);
+      console.log(progress)
+      prgBar.innerHTML = '<div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: '+progress+'%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>';
+    
+      statusAddingBook.innerHTML = 'Uploading eBook... ('+progress+'% done)';
+    
+    
+      switch (snapshot.state) {
+        case firebase.storage.TaskState.PAUSED:
+          console.log('Upload is paused');
+          break;
+        case firebase.storage.TaskState.RUNNING:
+          console.log('Upload is running');
+          break;
+      }
+    }, function(error) {
+      
+    }, function() {
+    
+      uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+       /* refBooks.push({
+          bookTitle: bookTitle,
+          authorName: authorName,
+          genre1: genre1,
+          genre2: genre2,
+          genre3: genre3,
+          image: dateNow,
+          year: year,
+          status: "avail",
+          eBookURL: downloadURL
+         
+         
+        })*/
+
+
+      var downloadURL = downloadURL
+      var storageRef2 = fStorage.ref('bookPics/' + dateNow);
+      var uploadTask2 = storageRef2.put(inputImg);
+      uploadTask2.on('state_changed', function(snapshot){
+      var prgBar = document.getElementById('prgbar3');
+      var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      progress = Math.round(progress);
+      console.log(progress)
+      prgBar.innerHTML = '<div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: '+progress+'%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>';
+    
+      statusAddingBook.innerHTML = 'Uploading cover picture... ('+progress+'% done)';
+    
+    
+      switch (snapshot.state) {
+        case firebase.storage.TaskState.PAUSED:
+          console.log('Upload is paused');
+          break;
+        case firebase.storage.TaskState.RUNNING:
+          console.log('Upload is running');
+          break;
+      }
+    }, function(error) {
+      console.log(error)
+    }, function() {
+    
+      uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+       refEbooks.push({
+          bookTitle: bookTitle,
+          authorName: authorName,
+          genre1: genre1,
+          genre2: genre2,
+          genre3: genre3,
+          image: dateNow,
+          year: year,
+          eBookURL: downloadURL
+        })
+
+      
+        addEbookForm.reset()
+        imgPv.src = "images/noimg.png"
+        prgBar.innerHTML = ""
+
+        statusAddingBook.innerHTML = "A new eBook has been successfully added to the system."
+
+      });  
+       
+    
+    });
+
       });  
        
     
@@ -308,7 +443,6 @@ function loadBooks(){
 
 function detailEdit(bookTitle){
   var status = document.getElementById('status');
-
   var bookTitleInput = document.getElementById('bookTitle1');
   var authorName = document.getElementById('authorName1');
   var year = document.getElementById('year1');
@@ -323,7 +457,17 @@ function detailEdit(bookTitle){
   var img = document.getElementById('img-pv1');
   img.src = "images/loading.gif";
   var btnPlcHolder = document.getElementById("applyBtn");
-  status.innerHTML = ""
+  status.innerHTML = "";
+  var downloadBtn = document.getElementById('downloadQrBtn');
+  var canvas = document.getElementById('qr');
+  
+  var qr = new QRious({
+     element: document.getElementById('qr'),
+     value:bookTitle.toString(),
+     size: 113.3858267717
+    });
+
+    downloadBtn.href = canvas.toDataURL()
 
   btnPlcHolder.innerHTML = '<button type="button" onclick="editBook('+bookTitle+')" class=" btn btn-primary">Apply & Save</button>'
 
@@ -331,6 +475,7 @@ function detailEdit(bookTitle){
     snapshot.forEach(childSnapshot=>{
       var book = childSnapshot.val()
       bookTitleInput.value = book.bookTitle
+      downloadBtn.download = "BOOK " + book.bookTitle + '.png';
       year.value = book.year
       authorName.value = book.authorName
       genre1.value = book.genre1
@@ -614,6 +759,7 @@ function editBook(bookTitleInMS){
           })
         });
       });
+      status.innerHTML  = "<b>Book has been successfully edited!</b>";
     }).catch((error)=>{
       status.innerHTML  = "<b>There was an error in editing the book. Please try again</b>";
   
@@ -644,12 +790,23 @@ function seeDetail(bookTitleInMS){
   var img = document.getElementById('img-pv2');
   img.src = "images/loading.gif";
   status.innerHTML = "";
+  var downloadBtn = document.getElementById('downloadQrBtn2');
+  var canvas = document.getElementById('qr2');
+  
+  var qr = new QRious({
+     element: document.getElementById('qr2'),
+     value:bookTitle.toString(),
+     size: 113.3858267717
+    });
+
+    downloadBtn.href = canvas.toDataURL()
 
 
   refBooks.orderByChild("image").equalTo(bookTitleInMS).on('value', snapshot =>{
     snapshot.forEach(childSnapshot=>{
       var book = childSnapshot.val()
       bookTitleInput.value = book.bookTitle
+      downloadBtn.download = "BOOK " + book.bookTitle + '.png';
       year.value = book.year
       authorName.value = book.authorName
       genre1.value = book.genre1
@@ -723,7 +880,17 @@ function detailEditUser(uid){
   var applyBtn = document.getElementById("applyEditUserBtn");
   var status = document.getElementById("statusEditUser");
   var historyUserBtn = document.getElementById('showUserHistoryBtn');
+  var downloadBtn = document.getElementById('downloadQrBtn3');
+  var canvas = document.getElementById('qr3');
   status.innerHTML = "";
+  var qr = new QRious({
+    element: document.getElementById('qr3'),
+    value:uid.toString(),
+    size: 75.5905511811
+   });
+
+   downloadBtn.href = canvas.toDataURL()
+  
   historyUserBtn.innerHTML = '<button type="button" onclick="showUserHistory(\''+uid+'\')" class="btn btn-danger">Show user\'s borrowing history</button>';
 
 
@@ -734,6 +901,8 @@ function detailEditUser(uid){
 
     inputFname.value = x.fullName
     inputEmail.value = x.email
+    downloadBtn.download = "USER " + x.fullName + '.png';
+
     if(x.password == "non"){
       inputPw.readOnly = true
     }else{
@@ -785,63 +954,69 @@ function editUser(uid){
   var inputEmail = document.getElementById("email1");
   var inputPw = document.getElementById("password1");
   status.innerHTML = "<p class='mrgtop2'>Loading...</p>"
-
-  refUsers.child(uid).once("value", snapshot=>{
-    var x = snapshot.val()
-    firebase.auth().signInWithEmailAndPassword(x.email, x.password).then((userCreds)=>{
-      userCreds.user.updatePassword(inputPw.value).then(() => {
-        userCreds.user.updateEmail(inputEmail.value).then(()=>{
-
-        refUsers.child(uid).update({
-          fullName: inputFname.value,
-          email: inputEmail.value,
-          password: inputPw.value
-        }).then(()=>{
-            refBooks.orderByChild('borrowedBy').once('value', snapshot=>{
-              snapshot.forEach(childSnapshot=>{
-                refBooks.child(childSnapshot.key).child('history').orderByChild('borrowedBy').equalTo(uid).once('value', snapshot2=>{
-                  snapshot2.forEach(childSnapshot2=>{
-                    refBooks.child(childSnapshot.key).child('history').child(childSnapshot2.key).update({
-                      fullname: inputFname.value
-                    }).then(()=>{
-                      refBooks.child(childSnapshot.key).child('reports').orderByChild('reportedBy').equalTo(uid).once('value', snapshot3=>{
-                        if(snapshot3.exists()){
-                          snapshot3.forEach(childSnapshot3=>{
-                            refBooks.child(childSnapshot.key).child('reports').child(childSnapshot3.key).update({
-                              fullName: inputFname.value
-                            }).then(()=>{
-                              status.innerHTML = "<p class='mrgtop2'>User has been edited successfully</p>"
-                            }).catch(()=>{
-                              status.innerHTML = "<p class='mrgtop2'>There was en error. Please try again.</p>"
+  if(inputEmail.value != "" && inputFname.value != "" && inputPw.value.length >= 7 && isNaN(inputPw.value) == true){
+    refUsers.child(uid).once("value", snapshot=>{
+      var x = snapshot.val()
+      firebase.auth().signInWithEmailAndPassword(x.email, x.password).then((userCreds)=>{
+        userCreds.user.updatePassword(inputPw.value).then(() => {
+          userCreds.user.updateEmail(inputEmail.value).then(()=>{
+  
+          refUsers.child(uid).update({
+            fullName: inputFname.value,
+            email: inputEmail.value,
+            password: inputPw.value
+          }).then(()=>{
+            status.innerHTML = "<p class='mrgtop2'>User has been edited successfully</p>"
+              refBooks.orderByChild('borrowedBy').once('value', snapshot=>{
+                snapshot.forEach(childSnapshot=>{
+                  refBooks.child(childSnapshot.key).child('history').orderByChild('borrowedBy').equalTo(uid).once('value', snapshot2=>{
+                    snapshot2.forEach(childSnapshot2=>{
+                      refBooks.child(childSnapshot.key).child('history').child(childSnapshot2.key).update({
+                        fullname: inputFname.value
+                      }).then(()=>{
+                        status.innerHTML = "<p class='mrgtop2'>User has been edited successfully</p>"
+                        refBooks.child(childSnapshot.key).child('reports').orderByChild('reportedBy').equalTo(uid).once('value', snapshot3=>{
+                          if(snapshot3.exists()){
+                            snapshot3.forEach(childSnapshot3=>{
+                              refBooks.child(childSnapshot.key).child('reports').child(childSnapshot3.key).update({
+                                fullName: inputFname.value
+                              }).then(()=>{
+                                status.innerHTML = "<p class='mrgtop2'>User has been edited successfully</p>"
+                              }).catch(()=>{
+                                status.innerHTML = "<p class='mrgtop2'>There was en error. Please try again.</p>"
+                              })
                             })
-                          })
-                        }else{
-                          status.innerHTML = "<p class='mrgtop2'>User has been edited successfully</p>"
-                        }
+                          }else{
+                            status.innerHTML = "<p class='mrgtop2'>User has been edited successfully</p>"
+                          }
+                        })
+                      }).catch(()=>{
+                        status.innerHTML = "<p class='mrgtop2'>There was en error. Please try again.</p>"
                       })
-                    }).catch(()=>{
-                      status.innerHTML = "<p class='mrgtop2'>There was en error. Please try again.</p>"
                     })
                   })
                 })
               })
-            })
-
-        }).catch(()=>{
-          status.innerHTML = "<p class='mrgtop2'>There was en error. Please try again.</p>"
-          console.log("AAAA")
-        })
-          }).catch((error)=>{
-            status.innerHTML = "<p class='mrgtop2'>There was en error in updating the email. Please try again.</p>"
+  
+          }).catch(()=>{
+            status.innerHTML = "<p class='mrgtop2'>There was en error. Please try again.</p>"
+            console.log("AAAA")
           })
-        }, (error) => {
-          status.innerHTML = "<p class='mrgtop2'>There was en error in updating the password. Please try again.</p>"
-       });
-    
-    }).catch((error)=>{
-      status.innerHTML = "<p class='mrgtop2'>There was en error in user auth. Please try again.</p>"
+            }).catch((error)=>{
+              status.innerHTML = "<p class='mrgtop2'>There was en error in updating the email. Please try again.</p>"
+            })
+          }, (error) => {
+            status.innerHTML = "<p class='mrgtop2'>There was en error in updating the password. Please try again.</p>"
+         });
+      
+      }).catch((error)=>{
+        status.innerHTML = "<p class='mrgtop2'>There was en error in user auth. Please try again.</p>"
+      })
     })
-  })
+  }else{
+    status.innerHTML = "<p class='mrgtop2'>Input(s) must be filled correctly.</p>"
+  }
+  
   
 
 }

@@ -33,13 +33,17 @@
                 <li class="nav-item active">
                   <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
                 </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link" href="#allmembers"><b>All Members</b></a>
+                </li>
                 <li class="nav-item">
                   <a class="nav-link" href="#allbooks"><b>All Books</b></a>
 
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#allmembers"><b>All Members</b></a>
-                </li>
+                  <a class="nav-link" href="#allebooks"><b>All Ebooks</b></a>
+              </li>
                 
                 
               </ul>
@@ -65,6 +69,7 @@
                 <p class="text-white">smart, simple, secure library system.</p>
                 <a href="#addabook" class="btn btn-lg btn-outline-white btn-pill align-self-center mrgrt">Add a Book</a>
                 <a href="#addmember" class="btn btn-lg btn-white btn-pill align-self-center">Add a Member</a>
+                <a href="#addebook" class="btn btn-lg btn-outline-white btn-pill align-self-center mrgrt">Add an eBook</a>
 
 
             </div>
@@ -378,13 +383,55 @@
                    
                   </div>
                   <a onclick="addEbook()" class="white btn btn-outline-primary btn-pill ml-auto mr-auto">Submit</a>
-                  <a href="#allbooks" class="white btn btn-primary btn-pill ml-auto mr-auto">See all books</a>
+                  <a href="#allebooks" class="white btn btn-primary btn-pill ml-auto mr-auto">See all eBooks</a>
   
                 </form>
               </div>
             </div>
           </div>
         </div>
+
+        <div id="allebooks" class="contact section-invert py-4">
+          <h3 class="section-title text-center m-5">eBooks <!--everything except status del-->
+            <br>
+            <br>
+              <button class="btn btn-default" data-toggle="modal" data-target="#trashEbooks">See trash folder</button>
+              <a href="#addEbook"><button class="btn btn-default">Add an Ebook</button></a>
+  
+          </h3>
+              <div class="example col-md-10 ml-auto mr-auto ">
+                <div class="card scroll2">
+                <table id="wholeebookTable" class="table table-striped table-responsive-md">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Title</th>
+                      <th>Author</th>
+                      <th>Year</th>
+                      <th><i class="fas fa-edit"></i></th>
+                      <th><i class="fas fa-exclamation-triangle"></i></th>
+                      <th><i class="fas fa-book"></i></th>
+                      <th><i class="fas fa-trash"></i></th>
+
+                    </tr>
+                  </thead>
+                  <tbody id="eBookTableContents">
+                    <tr>
+                      <th>0</th>
+                      <td>Loading...</td>
+                      <td>Loading...</td>
+                      <td>Loading...</td>
+                      <td>Loading...</td>
+                      <td>Loading...</td>
+                      <td>Loading...</td>
+                      <td>Loading...</td>
+                    </tr>
+                  </tbody>
+                </table>
+                </div>
+          </div>
+        </div>
+
       <!-- Footer Section -->
       <footer>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -394,48 +441,10 @@
               <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="modal fade" id="reports" tabindex="-1" role="dialog">
-              <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" >Reports for <u><span id="reportBookTit"></span></u></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div class="insideModal2 row">
-                      <p class="lead" id="statusBookReport">Loading...</p>
-                    <div class="card scroll">
-                        <table id="reportsTable" class="table table-striped table-responsive-md">
-                            <thead>
-                              <tr>
-                                <th>#</th>
-                                <th>Submitted Date</th>
-                                <th>By</th>
-                                <th>Message</th>
-                               
-                              </tr>
-                            </thead>
-                            <tbody id="reportsTableContents">
-                              <tr>
-                                <td>1</td>
-                                <td>Loading...</td>
-                                <td>Loading...</td>
-                                <td>Loading...</td>
-                              </tr>
-                            </tbody>
-                          </table>
-                  </div>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                  </div>
-                </div>
-              </div>
-            </div>
+            
 
             <div class="modal fade" id="trash" tabindex="-1" role="dialog">
-                <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-dialog modal-lg2" role="document">
                   <div class="modal-content">
                     <div class="modal-header">
                       <h5 class="modal-title" >Trash Folder (Books)</h5>
@@ -452,6 +461,7 @@
                                   <th>Title</th>
                                   <th><i class="fas fa-edit"></i></th>
                                   <th><i class="fas fa-history"></i></th>
+                                  <th><i class="fas fa-exclamation-triangle"></i></th>
                                   <th><i class="fas fa-check"></i></th>
                                 </tr>
                               </thead>
@@ -475,8 +485,52 @@
                 </div>
               </div>
 
+              <div class="modal fade" id="trashEbooks" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-lg2" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" >Trash Folder (eBooks)</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="insideModal2 row">
+                      <div class="card scroll">
+                          <table id="trashEbookTable" class="table table-striped table-responsive-md">
+                              <thead>
+                                <tr>
+                                  <th>#</th>
+                                  <th>Title</th>
+                                  <th><i class="fas fa-edit"></i></th>
+                                  <th><i class="fas fa-book"></i></th>
+                                  <th><i class="fas fa-exclamation-triangle"></i></th>
+                                  <th><i class="fas fa-check"></i></th>
+
+                                </tr>
+                              </thead>
+                              <tbody id="trashEbookTableContents">
+                                <tr>
+                                  <th>1</th>
+                                  <th>Loading...</th>
+                                  <td>Loading...</td>
+                                  <td>Loading...</td>
+                                  <td>Loading...</td>
+                                  <td>Loading...</td>
+      
+                                </tr>
+                              </tbody>
+                            </table>
+                    </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div class="modal fade" id="trashUser" tabindex="-1" role="dialog">
-                <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-dialog modal-lg3" role="document">
                   <div class="modal-content">
                     <div class="modal-header">
                       <h5 class="modal-title" >Trash Folder (Users)</h5>
@@ -590,7 +644,7 @@
                   <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                       <div class="modal-header">
-                        <h5 class="modal-title" ><span id="bookTitDel">Delete</span>
+                        <h5 class="modal-title" ><span id="bookTitDel">Delete Book</span>
                         </h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                           <span aria-hidden="true">&times;</span>
@@ -603,6 +657,28 @@
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal"><b>Cancel</b></button>
                         <span id="removeBtn"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="modal fade" id="deleteEbook" tabindex="-1" role="dialog">
+                  <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" ><span id="ebookBookTitDel">Delete eBook</span>
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="insideModal2 row">
+                       <h4>Are you sure you want to remove this eBook?</h4>
+                       <h5>This eBook will be moved into the <b>trash</b> folder.</h5><h6><u>You can put it back anytime.</u></h6>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal"><b>Cancel</b></button>
+                        <span id="ebookRemoveBtn"></span>
                       </div>
                     </div>
                   </div>
@@ -730,6 +806,85 @@
               </div>
             </div>
 
+            <div class="modal fade" id="detailEditEbook" tabindex="-1" role="dialog">
+              <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" >Edit eBook</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <form class="insideModal">
+                      <div class="row">
+                        
+                        <div class="col-12">
+                          <div class="form-group">
+                            <label >Book title: *</label>
+                            <input type="text" class="form-control" id="ebookTitle" placeholder="Enter title">
+                          </div>
+                        </div>
+                        <div class="col-12">
+                          <div class="form-group">
+                            <label >Author name: *</label>
+                            <input type="text" class="form-control" id="ebookAuthorName" placeholder="Enter author name">
+                          </div>
+                        </div>
+                      
+                          
+                        <div class="col-12">
+                          <div class="form-group">
+                            <label >Year released:</label>
+                            <input type="text" class="form-control" id="ebookYear" placeholder="Year Released">
+                          </div>
+                        </div>
+                       
+                        <div class="col-md-4 col-sm-4">
+                          <div class="form-group">
+                            <label >Genre 1: *</label>
+                            <input type="text" class="form-control" id="ebookGenre1" placeholder="Enter genre">
+                          </div>
+                        </div>
+                        <div class="col-md-4 col-sm-4">
+                          <div class="form-group">
+                            <label >Genre 2:</label>
+                            <input type="text" class="form-control" id="ebookGenre2" placeholder="Enter genre">
+                          </div>
+                        </div>
+                        <div class="col-md-4 col-sm-4">
+                          <div class="form-group">
+                            <label >Genre 3:</label>
+                            <input type="text" class="form-control" id="ebookGenre3" placeholder="Enter genre">
+                          </div>
+                        </div>
+            
+      
+                        <div class="col-12">
+                          <div class="form-group">
+                              <img src="images/noimg.png" class="mrgbtm" id="ebook-img-pv" style="width: 100px; height: 140px;"/>
+                          </div>
+
+                          <div class="col-6">
+                            <div class="form-group">
+                            </div>
+                          </div>
+                        </div>
+                          <div class="col-12">
+                                <p><span id="ebookStatus"></span></p>
+                          </div>
+                      </div>
+                      <div class="row">
+                       
+                      </div>
+                    </form>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <span id="applyBtnEbook"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div class="modal fade" id="detailEditUser" tabindex="-1" role="dialog">
               <div class="modal-dialog modal-lg2" role="document">
                 <div class="modal-content">
@@ -791,6 +946,85 @@
               </div>
             </div>
 
+            <div class="modal fade" id="reports" tabindex="-1" role="dialog">
+              <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" >Reports for <u><span id="reportBookTit"></span></u></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="insideModal2 row">
+                      <p class="lead" id="statusBookReport">Loading...</p>
+                    <div class="card scroll">
+                        <table id="reportsTable" class="table table-striped table-responsive-md">
+                            <thead>
+                              <tr>
+                                <th>#</th>
+                                <th>Submitted Date</th>
+                                <th>By</th>
+                                <th>Message</th>
+                               
+                              </tr>
+                            </thead>
+                            <tbody id="reportsTableContents">
+                              <tr>
+                                <td>1</td>
+                                <td>Loading...</td>
+                                <td>Loading...</td>
+                                <td>Loading...</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                  </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal fade" id="reportEbook" tabindex="-1" role="dialog">
+              <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" >Reports for <u><span id="reportEbookTit"></span></u></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="insideModal2 row">
+                      <p class="lead" id="statusEbookReport">Loading...</p>
+                    <div class="card scroll">
+                        <table id="ebookReportsTable" class="table table-striped table-responsive-md">
+                            <thead>
+                              <tr>
+                                <th>#</th>
+                                <th>Submitted Date</th>
+                                <th>By</th>
+                                <th>Message</th>
+                               
+                              </tr>
+                            </thead>
+                            <tbody id="ebookReportsTableContents">
+                              <tr>
+                                <td>1</td>
+                                <td>Loading...</td>
+                                <td>Loading...</td>
+                                <td>Loading...</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                  </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <div class="modal fade" id="detail" tabindex="-1" role="dialog">
                 <div class="modal-dialog modal-lg" role="document">

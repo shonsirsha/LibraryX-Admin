@@ -372,7 +372,9 @@ function addEbook(){
           genre3: genre3,
           image: dateNow,
           year: year,
-          eBookURL: downloadURL
+          eBookURL: downloadURL,
+          trashedTime: 0,
+          status: "avail"
         })
 
       
@@ -400,11 +402,70 @@ function addEbook(){
 
 
 }
+function loadEbooks(){
+  var table = document.getElementById('eBookTableContents')
+  table.innerHTML = ""
 
+  refEbooks.orderByChild("image").on('value', snapshot=>{
+    refEbooks.orderByChild("status").equalTo("del").on('value', snapshot2=>{
+      table.innerHTML = ""
+      var y = snapshot.numChildren() - snapshot2.numChildren()
+
+      snapshot.forEach(childSnapshot=>{
+        var x = childSnapshot.val()
+        if (x.status != "del"){
+          table.innerHTML = '<tr><td>'+y+'</td><td><b>'+x.bookTitle+'</b></td><td>'+x.authorName+'</td><td>'+x.year+'</td><td><button type="button" class="btn btn-primary" data-toggle="modal" onclick="detailEditEbook('+x.image+')" data-target="#detailEditEbook"><b>Detail / Edit</b></button></td><td><button type="button" class="btn btn-warning" data-toggle="modal" onclick="seeEbookReports('+x.image+')" data-target="#reportEbook"><b>Reports</b></td><td><a target="_blank" href="'+x.eBookURL+'" class="btn btn-info"><b class="white">See eBook</b></a></td> <td><button type="button" class="btn btn-danger" data-toggle="modal" onclick="deleteEbookShowModal('+x.image+')" data-target="#deleteEbook"><b>X</b></button></td></tr>' + table.innerHTML;
+
+          y-= 1
+        }
+
+      })
+
+    })
+  })
+}
+function loadTrashEbooks(){ // this is trash folder for eBooks
+
+  var trashTable = document.getElementById('trashEbookTableContents')
+  var wholeTable = document.getElementById('trashEbookTable');
+  trashTable.innerHTML = ""
+
+  refEbooks.orderByChild("trashedTime").on("value", snapshot=>{
+
+    refEbooks.orderByChild("status").equalTo("del").on('value', snapshot2=>{
+
+      if(snapshot2.exists()){
+        wholeTable.style.display = 'block';
+        trashTable.innerHTML = ""
+      var z = snapshot2.numChildren()
+      
+      snapshot.forEach(childSnapshot=>{
+        var x = childSnapshot.val()
+
+        if(x.status == "del"){
+          trashTable.innerHTML = '<tr><td>'+z+'</td><td><b>'+x.bookTitle+'</b></td><td><button type="button" class="btn btn-primary" data-toggle="modal" onclick="detailEditEbook('+x.image+')" data-target="#detailEditEbook"><b>Detail / Edit</b></button></td><td><button type="button" class="btn btn-warning" data-toggle="modal" onclick="seeEbookReports('+x.image+')" data-target="#reportEbook"><b>Reports</b></td><td><a target="_blank" href="'+x.eBookURL+'" class="btn btn-info"><b class="white">See eBook</b></a></td><td><button type="button" class="btn btn-success" onclick="putBackEbook('+x.image+')"><b>Put Back</b></button></td></tr>'  + trashTable.innerHTML
+
+          z-= 1;
+        }
+
+      })
+      }else{
+        wholeTable.style.display = 'none';
+      }
+
+    
+    })
+    
+  })
+
+
+}
 function loadBooks(){
+  loadTrashFolder()
+  loadEbooks()
+  loadTrashEbooks()
   loadUsers()
   loadTrashUserFolder()
-  loadTrashFolder()
   var table = document.getElementById('tbl')
   table.innerHTML = ""
 
@@ -439,6 +500,95 @@ function loadBooks(){
     })
     
   });
+}
+
+
+function detailEditEbook(bookTitle){
+  var status = document.getElementById('ebookStatus');
+  var bookTitleInput = document.getElementById('ebookTitle');
+  var authorName = document.getElementById('ebookAuthorName');
+  var year = document.getElementById('ebookYear');
+  var genre1 = document.getElementById('ebookGenre1');
+  var genre2 = document.getElementById('ebookGenre2');
+  var genre3 = document.getElementById('ebookGenre3');
+  var img = document.getElementById('ebook-img-pv');
+  img.src = "images/loading.gif";
+  var btnPlcHolder = document.getElementById("applyBtnEbook");
+  status.innerHTML = "";
+  btnPlcHolder.innerHTML = '<button type="button" onclick="editEbook('+bookTitle+')" class=" btn btn-primary">Apply & Save</button>'
+
+  refEbooks.orderByChild("image").equalTo(bookTitle).on('value', snapshot =>{
+    snapshot.forEach(childSnapshot=>{
+      var book = childSnapshot.val()
+      bookTitleInput.value = book.bookTitle
+      year.value = book.year
+      authorName.value = book.authorName
+      genre1.value = book.genre1
+      genre2.value = book.genre2
+      genre3.value = book.genre3
+
+      fStorage.ref('bookPics/'+book.image).getDownloadURL().then(function(url) {
+        // `url` is the download URL 
+        var img = document.getElementById('ebook-img-pv');
+        img.src = url;
+      }).catch(function(error) {
+        // Handle any errors
+      })
+
+    })
+  });
+
+}
+
+function editEbook(bookTitle){
+  var status = document.getElementById('ebookStatus');
+  var bookTitleInput = document.getElementById('ebookTitle');
+  var authorName = document.getElementById('ebookAuthorName');
+  var year = document.getElementById('ebookYear');
+  var genre1 = document.getElementById('ebookGenre1');
+  var genre2 = document.getElementById('ebookGenre2');
+  var genre3 = document.getElementById('ebookGenre3');
+  
+  status.innerHTML = "Editing...";
+
+  
+  refEbooks.orderByChild("image").equalTo(bookTitle).once('value', snapshot=>{
+    var bookKey = Object.keys(snapshot.val())[0];
+    refEbooks.child(bookKey).update({
+      bookTitle: bookTitleInput.value,
+      authorName: authorName.value,
+      year: year.value,
+      genre1: genre1.value,
+      genre2: genre2.value,
+      genre3: genre3.value,
+    }).then(()=>{
+      refUsers.orderByChild('uid').once('value', snapshot2=>{
+        snapshot2.forEach(childSnapshot=>{
+          refUsers.child(childSnapshot.key).child("savedEbooks").orderByChild("image").equalTo(bookTitle).once('value', snapshot2=>{
+            snapshot2.forEach(childSnapshot2=>{
+              refUsers.child(childSnapshot.key).child("savedEbooks").child(childSnapshot2.key).update({
+                bookTitle: bookTitleInput.value,
+                authorName: authorName.value,
+                year: year.value,
+                genre1: genre1.value,
+                genre2: genre2.value,
+                genre3: genre3.value,
+              }).then(()=>{
+                status.innerHTML  = "<b>eBook has been successfully edited!</b>";
+              }).catch(()=>{
+                status.innerHTML  = "<b>There was an error in editing the eBook. Please try again</b>";
+              })
+            })
+          })
+        })
+      })
+      status.innerHTML  = "<b>Book has been successfully edited!</b>";
+    }).catch((error)=>{
+      status.innerHTML  = "<b>There was an error in editing the eBook. Please try again</b>";
+    });
+  });
+
+
 }
 
 function detailEdit(bookTitle){
@@ -530,6 +680,44 @@ function deleteBookShowModal(bookTitleInMS){
 
 }
 
+function deleteEbookShowModal(bookTitleInMS){
+  var title = document.getElementById("ebookBookTitDel");
+  var removeBtn = document.getElementById("ebookRemoveBtn");
+  refEbooks.orderByChild("image").equalTo(bookTitleInMS).once('value', snapshot =>{
+    var bookKey = Object.keys(snapshot.val())[0];
+    snapshot.forEach(childSnapshot=>{
+      var book = childSnapshot.val();
+      title.innerHTML = book.bookTitle
+      removeBtn.innerHTML = '<button type="button" onclick="deleteEbook(\''+bookKey+'\',\''+bookTitleInMS+'\')" class="btn btn-danger" data-dismiss="modal"><b>Yes, remove it</b></button>';
+    });
+  });
+
+}
+
+function deleteEbook(bookKey,bookTitleInMS){
+  var dateNow = Date.now()
+  refEbooks.child(bookKey).update({
+    status: "del",
+    trashedTime: dateNow
+  })
+
+  refUsers.orderByChild("email").once('value',snapshot=>{
+   // var userKey = Object.keys(snapshot.val())[3];
+    snapshot.forEach(childSnapshot=>{
+      refUsers.child(childSnapshot.key).child('savedEbooks').orderByChild("image").equalTo(parseInt(bookTitleInMS)).once('value', snapshot2=>{
+        snapshot2.forEach(childSnapshot2=>{
+          console.log(childSnapshot2.key)
+          refUsers.child(childSnapshot.key).child('savedEbooks').child(childSnapshot2.key).update({
+            status: "del"
+          })
+        })
+      })
+    })
+    
+  })
+
+}
+
 
 function deleteBook(bookKey){
   var dateNow = Date.now()
@@ -551,6 +739,32 @@ function putBack(bookImgTitleInMS){
   
 }
 
+function putBackEbook(bookImgTitleInMS){
+  refEbooks.orderByChild("image").equalTo(bookImgTitleInMS).once('value', snapshot =>{
+  var bookKey = Object.keys(snapshot.val())[0];
+
+  refEbooks.child(bookKey).update({
+    status: "avail"
+  })
+  })
+
+  refUsers.orderByChild("email").once('value',snapshot=>{
+    // var userKey = Object.keys(snapshot.val())[3];
+     snapshot.forEach(childSnapshot=>{
+       refUsers.child(childSnapshot.key).child('savedEbooks').orderByChild("image").equalTo(parseInt(bookImgTitleInMS)).once('value', snapshot2=>{
+         snapshot2.forEach(childSnapshot2=>{
+           console.log(childSnapshot2.key)
+           refUsers.child(childSnapshot.key).child('savedEbooks').child(childSnapshot2.key).update({
+             status: "avail"
+           })
+         })
+       })
+     })
+     
+   })
+  
+}
+
 function putBackUser(uid){
   refUsers.child(uid).once('value', snapshot=>{
     var x = snapshot.val();
@@ -569,39 +783,61 @@ function seeReports(bookTitleInMS){
   table.innerHTML = ""
   refBooks.orderByChild("image").equalTo(bookTitleInMS).once('value', snapshot=>{
     var bookKey = Object.keys(snapshot.val())[0];
-
     snapshot.forEach(childSnapshot=>{
       var book = childSnapshot.val();
       bookTitle.innerHTML = book.bookTitle;
     });
-
     refBooks.child(bookKey).child("reports").orderByChild("bookImgTitleInMS").equalTo(bookTitleInMS).on('value', snapshot=>{
       if(snapshot.exists()){
       status.style.display = "none";
       wholeTable.style.display = "block";
-
       table.innerHTML = ""
-      var y = 1
-
+      var y = snapshot.numChildren()
       snapshot.forEach(childSnapshot=>{
           var report = childSnapshot.val();      
-
-          
-            table.innerHTML = '<td>'+y+'</td><td>'+getDate(report.reportTime)+'</td><td>'+report.fullName+'</td><td>'+report.report+'</td>' + table.innerHTML
-          
-          y += 1;
-
+          table.innerHTML = '<td>'+y+'</td><td>'+getDate(report.reportTime)+'</td><td>'+report.fullName+'</td><td>'+report.report+'</td>' + table.innerHTML
+          y -= 1;
       });
-
       }else{
       wholeTable.style.display = "none";
       status.style.display = "block";
       status.innerHTML = "No report is available for this book."
       }
     })
-
   })
+}
 
+function seeEbookReports(bookTitleInMS){
+  var bookTitle = document.getElementById('reportEbookTit');
+  var wholeTable = document.getElementById('ebookReportsTable');
+  var table = document.getElementById('ebookReportsTableContents');
+  var status = document.getElementById('statusEbookReport');
+  table.innerHTML = ""
+
+  refEbooks.orderByChild("image").equalTo(bookTitleInMS).once('value', snapshot=>{
+    var bookKey = Object.keys(snapshot.val())[0];
+    snapshot.forEach(childSnapshot=>{
+      var book = childSnapshot.val();
+      bookTitle.innerHTML = book.bookTitle;
+    });
+    refEbooks.child(bookKey).child("reports").orderByChild("bookImgTitleInMS").equalTo(bookTitleInMS).on('value', snapshot2=>{
+      if(snapshot2.exists()){
+      status.style.display = "none";
+      wholeTable.style.display = "block";
+      table.innerHTML = ""
+      var y = snapshot2.numChildren()
+      snapshot2.forEach(childSnapshot=>{
+          var report = childSnapshot.val();      
+          table.innerHTML = '<td>'+y+'</td><td>'+getDate(report.reportTime)+'</td><td>'+report.fullName+'</td><td>'+report.report+'</td>' + table.innerHTML
+          y -= 1;
+      });
+      }else{
+      wholeTable.style.display = "none";
+      status.style.display = "block";
+      status.innerHTML = "No report is available for this eBook."
+      }
+    })
+  })
 }
 
 function seeHistory(bookTitleInMS){
@@ -700,7 +936,7 @@ function loadTrashFolder(){ // this is trash folder for Books
           var x = childSnapshot.val()
 
           if(x.status == "del"){
-            trashTable.innerHTML = '<tr><td>'+z+'</td><td><b>'+x.bookTitle+'</b></td><td><button type="button" class="btn btn-primary" data-toggle="modal" onclick="detailEdit('+x.image+')" data-target="#detailEdit"><b>Detail / Edit</b></button></td><td><button type="button" class="btn btn-outline-primary" data-toggle="modal" onclick="seeHistory('+x.image+')" data-target="#history"><b>History</b></button></td><td><button type="button" class="btn btn-success" onclick="putBack('+x.image+')"><b>Put Back</b></button></td></tr>'  + trashTable.innerHTML
+            trashTable.innerHTML = '<tr><td>'+z+'</td><td><b>'+x.bookTitle+'</b></td><td><button type="button" class="btn btn-primary" data-toggle="modal" onclick="detailEdit('+x.image+')" data-target="#detailEdit"><b>Detail / Edit</b></button></td><td><button type="button" class="btn btn-outline-primary" data-toggle="modal" onclick="seeHistory('+x.image+')" data-target="#history"><b>History</b></button></td><td><button type="button" class="btn btn-warning" data-toggle="modal" onclick="seeReports('+x.image+')" data-target="#reports"><b>See Reports</b></button></td><td><button type="button" class="btn btn-success" onclick="putBack('+x.image+')"><b>Put Back</b></button></td></tr>'  + trashTable.innerHTML
 
             z-= 1;
           }
@@ -744,7 +980,7 @@ function editBook(bookTitleInMS){
       availAt: aisle.value,
       max: parseInt(max.value)
     }).then(()=>{
-      refUsers.orderByChild("fafa").once('value', snapshot=>{
+      refUsers.orderByChild("uid").once('value', snapshot=>{
         snapshot.forEach(childSnapshot=>{
           refUsers.child(childSnapshot.key).child("mybooks").orderByChild("bookImgTitleInMS").equalTo(bookTitleInMS).once('value',snapshot2=>{
             snapshot2.forEach(childSnapshot2=>{
@@ -795,7 +1031,7 @@ function seeDetail(bookTitleInMS){
   
   var qr = new QRious({
      element: document.getElementById('qr2'),
-     value:bookTitle.toString(),
+     value:bookTitleInMS.toString(),
      size: 113.3858267717
     });
 

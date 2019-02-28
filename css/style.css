@@ -45,6 +45,10 @@
     max-width: 70% !important;
 }
 
+.modal-lg3 {
+    max-width: 60% !important;
+}
+
 .unavail{
     background-color: rgb(181, 24, 24);
 }

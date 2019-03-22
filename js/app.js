@@ -996,7 +996,7 @@ function editBook(bookTitleInMS){
   var qty = document.getElementById('qty1');
   var setQty = 0
   var avQty = 0
-  var status = ""
+  var bookStatus = ""
 
   var status = document.getElementById('status');
   status.innerHTML = "Editing...";
@@ -1007,7 +1007,7 @@ function editBook(bookTitleInMS){
       var book = childSnapshot.val()
       setQty = parseInt(book.setQty)
       avQty = parseInt(book.qty)
-      status = book.status
+      bookStatus = book.status
     })
     var borrowedQty = setQty - avQty
     if(qty.value < borrowedQty){
@@ -1015,9 +1015,9 @@ function editBook(bookTitleInMS){
     }else{
     var newAvQty = (parseInt(qty.value) - setQty) + avQty
     if(qty.value > borrowedQty){
-      status = "avail"
+      bookStatus = "avail"
     }else if(qty.value == borrowedQty){
-      status = "no"
+      bookStatus = "no"
     }
 
     refBooks.child(bookKey).update({
@@ -1031,7 +1031,7 @@ function editBook(bookTitleInMS){
       max: parseInt(max.value),
       setQty: parseInt(qty.value),
       qty: newAvQty,
-      status: status
+      status: bookStatus
     }).then(()=>{
       refUsers.orderByChild("uid").once('value', snapshot=>{
         snapshot.forEach(childSnapshot=>{

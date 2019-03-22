@@ -70,6 +70,7 @@
                 <a href="#addabook" class="btn btn-lg btn-outline-white btn-pill align-self-center mrgrt">Add a Book</a>
                 <a href="#addmember" class="btn btn-lg btn-white btn-pill align-self-center">Add a Member</a>
                 <a href="#addebook" class="btn btn-lg btn-outline-white btn-pill align-self-center mrgrt">Add an eBook</a>
+                <button onclick="addqty()" class="btn btn-lg btn-outline-white btn-pill align-self-center mrgrt">Add an QTY</a>
 
 
             </div>
@@ -210,6 +211,12 @@
                   </div>
                   <div class="col-md-12 col-sm-12">
                     <div class="form-group">
+                      <label >Quantity:</label>
+                      <input type="text" class="form-control" id="qty" placeholder="Enter book quantity">
+                    </div>
+                  </div>
+                  <div class="col-md-12 col-sm-12">
+                    <div class="form-group">
                       <label >Maximum Period of Borrowing (in days):</label>
                       <input type="text" value="21" class="form-control" id="max" placeholder="Enter days">
                     </div>
@@ -275,7 +282,10 @@
                     <th>Title</th>
                     <th>Author</th>
                     <th>Year</th>
-                    <th>Status</th>
+                    <th>Total Quantity</th>
+                    <th>Available Quantity</th>
+                    <th>Currently Borrowed</th>
+
                     <th><i class="fas fa-edit"></i></th>
                     <th><i class="fas fa-history"></i></th>
                     <th><i class="fas fa-exclamation-triangle"></i></th>
@@ -753,17 +763,24 @@
                             </div>
                           </div>
                           
-                        <div class="col-md-6 col-sm-4">
+                        <div class="col-4">
                             <div class="form-group">
                                 <label>Borrowed on:</label>
                                 <input type="text" class="form-control" id="borrowedOn1" placeholder="" value="Mon, 11 Jan 19" readonly>
                             </div>
                           </div>
-                          <div class="col-md-6 col-sm-4">
+                          <div class="col-4">
                             <div class="form-group">
                                 <label>Returned on:</label>
                                 <input type="text" class="form-control" id="returnedOn1" placeholder="" value="Wed, 13 Jan 19" readonly>
                               </div>
+                          </div>
+                          <div class="col-4">
+                            <div class="form-group">
+                              <label class="small2">Quantity</label>
+                              <input type="text" class="form-control" id="qty1" placeholder="Quantity">
+                            </div>
+                          
                           </div>
 
                        
@@ -791,7 +808,7 @@
                         
       
                           <div class="col-12">
-                                <p><span id="status"></span></p>
+                                <p><span id="status">ASD</span></p>
                           </div>
                       </div>
                       <div class="row">

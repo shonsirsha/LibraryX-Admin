@@ -2,7 +2,7 @@ const refAdmin = firebase.database().ref('admins');
 const refUsers = firebase.database().ref('users');
 const refBooks = firebase.database().ref('books');
 const refEbooks = firebase.database().ref('ebooks');
-
+var qtyTotal = 0
 const fStorage = firebase.storage();
 
 var libIdGlobal;
@@ -37,6 +37,7 @@ function logout(){
   }, function(error) {
   });
 }
+
 
 function libIdClearer(){
   libIdGlobal = false
@@ -202,6 +203,8 @@ function addBook(){
   var inputImg = document.getElementById('inputImg').files[0];
   var max = document.getElementById('max').value;
   var aisle = document.getElementById('aisle').value;
+  var qty = document.getElementById('qty').value;
+
   var imgPv = document.getElementById('img-pv');
   var addBookForm = document.getElementById('addBookForm')
 
@@ -252,7 +255,9 @@ function addBook(){
           until: 0,
           max: parseInt(max),
           availAt: aisle,
-          borrowedBy: "none"
+          borrowedBy: "none",
+          qty: qty,
+          setQty: qty
         })
         
         addBookForm.reset()
@@ -286,7 +291,7 @@ function addEbook(){
   var inputImg = document.getElementById('inputImg3').files[0];
   var inputPdf = document.getElementById('inputPdf').files[0];
   var imgPv = document.getElementById('img-pv3');
-  var addEbookForm = document.getElementById('addEbookForm')
+  var addEbookForm = document.getElementById('addEbookForm');
 
   var statusAddingBook = document.getElementById('statusAddingBook2');
   var prgBar = document.getElementById('prgbar3');
@@ -402,6 +407,20 @@ function addEbook(){
 
 
 }
+
+function addqty(){
+  refBooks.orderByChild("image").once('value', snapshot=>{
+
+    snapshot.forEach(childSnapshot=>{
+      var x = childSnapshot.key
+      refBooks.child(x).update({
+        setQty: 3,
+        qty: 3
+      })
+    })
+
+  })
+}
 function loadEbooks(){
   var table = document.getElementById('eBookTableContents')
   table.innerHTML = ""
@@ -461,6 +480,8 @@ function loadTrashEbooks(){ // this is trash folder for eBooks
 
 }
 function loadBooks(){
+
+
   loadTrashFolder()
   loadEbooks()
   loadTrashEbooks()
@@ -483,13 +504,16 @@ function loadBooks(){
        
       if (x.status == "avail"){
         
-        x.status = "<kbd class='avail'>AVAILABLE</kbd>"
-        table.innerHTML = '<tr><td>'+y+'</td><td><b>'+x.bookTitle+'</b></td><td>'+x.authorName+'</td><td>'+x.year+'</td><td class="av"><b>'+x.status+'</b></td><td><button type="button" class="btn btn-primary" data-toggle="modal" onclick="detailEdit('+x.image+')" data-target="#detailEdit"><b>Detail / Edit</b></button></td><td><button type="button" class="btn btn-outline-primary" data-toggle="modal" onclick="seeHistory('+x.image+')" data-target="#history"><b>History</b></button></td><td><button type="button" class="btn btn-warning" data-toggle="modal" onclick="seeReports('+x.image+')" data-target="#reports"><b>Reports</b></td><td><button type="button" class="btn btn-danger" data-toggle="modal" onclick="deleteBookShowModal('+x.image+')" data-target="#delete"><b>X</b></button></td></tr>' + table.innerHTML;
+        if (x.qty == x.setQty) {
+        table.innerHTML = '<tr><td>'+y+'</td><td><b>'+x.bookTitle+'</b></td><td>'+x.authorName+'</td><td><b>'+x.year+'</b></td><td>'+x.setQty+'</td><td>'+x.qty+'</td><td><b>'+parseInt(x.setQty - x.qty)+'</b></td><td><button type="button" class="btn btn-primary" data-toggle="modal" onclick="detailEdit('+x.image+')" data-target="#detailEdit"><b>Detail / Edit</b></button></td><td><button type="button" class="btn btn-outline-primary" data-toggle="modal" onclick="seeHistory('+x.image+')" data-target="#history"><b>History</b></button></td><td><button type="button" class="btn btn-warning" data-toggle="modal" onclick="seeReports('+x.image+')" data-target="#reports"><b>Reports</b></td><td><button type="button" class="btn btn-danger" ><b>X</b></button></td></tr>' + table.innerHTML;
+         
+        }else{
+          table.innerHTML = '<tr><td>'+y+'</td><td><b>'+x.bookTitle+'</b></td><td>'+x.authorName+'</td><td><b>'+x.year+'</b></td><td>'+x.setQty+'</td><td>'+x.qty+'</td><td><b>'+parseInt(x.setQty - x.qty)+'</b></td><td><button type="button" class="btn btn-primary" data-toggle="modal" onclick="detailEdit('+x.image+')" data-target="#detailEdit"><b>Detail / Edit</b></button></td><td><button type="button" class="btn btn-outline-primary" data-toggle="modal" onclick="seeHistory('+x.image+')" data-target="#history"><b>History</b></button></td><td><button type="button" class="btn btn-warning" data-toggle="modal" onclick="seeReports('+x.image+')" data-target="#reports"><b>Reports</b></td><td><button type="button" class="btn btn-danger" disabled><b>X</b></button></td></tr>' + table.innerHTML;
+        }
+       
 
       }else{
-        
-        x.status = "<kbd class='unavail' >BORROWED</kbd>"
-        table.innerHTML = '<tr><td>'+y+'</td><td><b>'+x.bookTitle+'</b></td><td>'+x.authorName+'</td><td>'+x.year+'</td><td class="uv"><b>'+x.status+'</b></td><td><button type="button" class="btn btn-success" data-toggle="modal" onclick="seeDetail('+x.image+')" data-target="#detail"><b>Detail</b></button></td><td><button type="button" class="btn btn-outline-primary" data-toggle="modal" onclick="seeHistory('+x.image+')" data-target="#history"><b>History</b></button></td><td><button type="button" class="btn btn-warning" data-toggle="modal" onclick="seeReports('+x.image+')" data-target="#reports"><b>Reports</b></td><td><button type="button" class="btn btn-danger" disabled><b>X</b></button></td></tr>' + table.innerHTML;
+        table.innerHTML = '<tr><td>'+y+'</td><td><b>'+x.bookTitle+'</b></td><td>'+x.authorName+'</td><td><b>'+x.year+'</b></td><td>'+x.setQty+'</td><td>'+x.qty+'</td><td><b>'+parseInt(x.setQty - x.qty)+'</b></td><td><button type="button" class="btn btn-primary" data-toggle="modal" onclick="detailEdit('+x.image+')" data-target="#detailEdit"><b>Detail / Edit</b></button></td><td><button type="button" class="btn btn-outline-primary" data-toggle="modal" onclick="seeHistory('+x.image+')" data-target="#history"><b>History</b></button></td><td><button type="button" class="btn btn-warning" data-toggle="modal" onclick="seeReports('+x.image+')" data-target="#reports"><b>Reports</b></td><td><button type="button" class="btn btn-danger" disabled ><b>X</b></button></td></tr>' + table.innerHTML;
       
       }
 
@@ -592,6 +616,7 @@ function editEbook(bookTitle){
 }
 
 function detailEdit(bookTitle){
+  qtyTotal = 0
   var status = document.getElementById('status');
   var bookTitleInput = document.getElementById('bookTitle1');
   var authorName = document.getElementById('authorName1');
@@ -604,6 +629,8 @@ function detailEdit(bookTitle){
   var borrowedOn = document.getElementById('borrowedOn1');
   var returnedOn = document.getElementById('returnedOn1');
   var max = document.getElementById('max1');
+  var qty = document.getElementById('qty1');
+
   var img = document.getElementById('img-pv1');
   img.src = "images/loading.gif";
   var btnPlcHolder = document.getElementById("applyBtn");
@@ -633,6 +660,7 @@ function detailEdit(bookTitle){
       genre3.value = book.genre3
       aisle.value = book.availAt
       max.value = book.max
+      qty.value = book.setQty
 
       fStorage.ref('bookPics/'+book.image).getDownloadURL().then(function(url) {
         // `url` is the download URL 
@@ -955,7 +983,7 @@ function loadTrashFolder(){ // this is trash folder for Books
 }
 
 function editBook(bookTitleInMS){
-  var status = document.getElementById('status');
+  qtyTotal = 0
   
   var bookTitleInput = document.getElementById('bookTitle1');
   var authorName = document.getElementById('authorName1');
@@ -965,11 +993,33 @@ function editBook(bookTitleInMS){
   var genre3 = document.getElementById('genre31');
   var aisle = document.getElementById('aisle1');
   var max = document.getElementById('max1');
+  var qty = document.getElementById('qty1');
+  var setQty = 0
+  var avQty = 0
+  var status = ""
+
+  var status = document.getElementById('status');
   status.innerHTML = "Editing...";
 
-  
   refBooks.orderByChild("image").equalTo(bookTitleInMS).once('value', snapshot=>{
     var bookKey = Object.keys(snapshot.val())[0];
+    snapshot.forEach(childSnapshot=>{
+      var book = childSnapshot.val()
+      setQty = parseInt(book.setQty)
+      avQty = parseInt(book.qty)
+      status = book.status
+    })
+    var borrowedQty = setQty - avQty
+    if(qty.value < borrowedQty){
+      status.innerHTML = "Uh-oh! Total quantity can't be less than currently borrowed books quantity."
+    }else{
+    var newAvQty = (parseInt(qty.value) - setQty) + avQty
+    if(qty.value > borrowedQty){
+      status = "avail"
+    }else if(qty.value == borrowedQty){
+      status = "no"
+    }
+
     refBooks.child(bookKey).update({
       bookTitle: bookTitleInput.value,
       authorName: authorName.value,
@@ -978,7 +1028,10 @@ function editBook(bookTitleInMS){
       genre2: genre2.value,
       genre3: genre3.value,
       availAt: aisle.value,
-      max: parseInt(max.value)
+      max: parseInt(max.value),
+      setQty: parseInt(qty.value),
+      qty: newAvQty,
+      status: status
     }).then(()=>{
       refUsers.orderByChild("uid").once('value', snapshot=>{
         snapshot.forEach(childSnapshot=>{
@@ -1000,6 +1053,8 @@ function editBook(bookTitleInMS){
       status.innerHTML  = "<b>There was an error in editing the book. Please try again</b>";
   
     });
+    }
+  
   });
 
 
@@ -1009,7 +1064,27 @@ function editBook(bookTitleInMS){
 
 */
 }
+function plus(){
+  qtyTotal += 1;
+  var minusBtn = document.getElementById("minusqty");
+  var qty = document.getElementById('qty1');
+  qty.value = parseInt(qty.value) + 1;
+  minusBtn.style.display = "block"
+  console.log(qtyTotal)
+}
 
+function minus(){
+  var minusBtn = document.getElementById("minusqty");
+  var qty = document.getElementById('qty1');
+  if(qty.value != 1){
+    qtyTotal -= 1;
+    qty.value = parseInt(qty.value) - 1;
+  }else{
+    minusBtn.style.display = "none"
+  }
+  console.log(qtyTotal)
+
+}
 function seeDetail(bookTitleInMS){
   var status = document.getElementById('status');
   var bookTitleInput = document.getElementById('bookTitle2');
@@ -1122,7 +1197,7 @@ function detailEditUser(uid){
   var qr = new QRious({
     element: document.getElementById('qr3'),
     value:uid.toString(),
-    size: 75.5905511811
+    size: 56.692913386
    });
 
    downloadBtn.href = canvas.toDataURL()

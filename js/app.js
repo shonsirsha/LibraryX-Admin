@@ -632,6 +632,7 @@ function detailEdit(bookTitle){
   var returnedOn = document.getElementById('returnedOn1');
   var max = document.getElementById('max1');
   var qty = document.getElementById('qty1');
+  var publisher = document.getElementById('publisher1');
 
   var img = document.getElementById('img-pv1');
   img.src = "images/loading.gif";
@@ -663,6 +664,7 @@ function detailEdit(bookTitle){
       aisle.value = book.availAt
       max.value = book.max
       qty.value = book.setQty
+      publisher.value = book.publisher
 
       fStorage.ref('bookPics/'+book.image).getDownloadURL().then(function(url) {
         // `url` is the download URL 
@@ -999,7 +1001,7 @@ function editBook(bookTitleInMS){
   var setQty = 0
   var avQty = 0
   var bookStatus = ""
-  var publisher = document.getElementById('publisher');
+  var publisher = document.getElementById('publisher1');
 
   var status = document.getElementById('status');
   status.innerHTML = "Editing...";
@@ -1035,7 +1037,7 @@ function editBook(bookTitleInMS){
       setQty: parseInt(qty.value),
       qty: newAvQty,
       status: bookStatus,
-      publisher: publisher
+      publisher: publisher.value
     }).then(()=>{
       refUsers.orderByChild("uid").once('value', snapshot=>{
         snapshot.forEach(childSnapshot=>{

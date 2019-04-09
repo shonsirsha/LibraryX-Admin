@@ -204,6 +204,7 @@ function addBook(){
   var max = document.getElementById('max').value;
   var aisle = document.getElementById('aisle').value;
   var qty = document.getElementById('qty').value;
+  var publisher = document.getElementById('publisher').value;
 
   var imgPv = document.getElementById('img-pv');
   var addBookForm = document.getElementById('addBookForm')
@@ -215,7 +216,7 @@ function addBook(){
     year = "Unknown"
   }
 
-  if(bookTitle != "" && authorName != "" && genre1 != "" && inputImg != null){
+  if(bookTitle != "" && authorName != "" && genre1 != "" && inputImg != null && publisher != ""){
     var dateNow = Date.now()
     var storageRef = fStorage.ref('bookPics/' + dateNow);
     var uploadTask = storageRef.put(inputImg);
@@ -257,7 +258,8 @@ function addBook(){
           availAt: aisle,
           borrowedBy: "none",
           qty: qty,
-          setQty: qty
+          setQty: qty,
+          publisher: publisher
         })
         
         addBookForm.reset()
@@ -505,7 +507,7 @@ function loadBooks(){
       if (x.status == "avail"){
         
         if (x.qty == x.setQty) {
-        table.innerHTML = '<tr><td>'+y+'</td><td><b>'+x.bookTitle+'</b></td><td>'+x.authorName+'</td><td><b>'+x.year+'</b></td><td>'+x.setQty+'</td><td>'+x.qty+'</td><td><b>'+parseInt(x.setQty - x.qty)+'</b></td><td><button type="button" class="btn btn-primary" data-toggle="modal" onclick="detailEdit('+x.image+')" data-target="#detailEdit"><b>Detail / Edit</b></button></td><td><button type="button" class="btn btn-outline-primary" data-toggle="modal" onclick="seeHistory('+x.image+')" data-target="#history"><b>History</b></button></td><td><button type="button" class="btn btn-warning" data-toggle="modal" onclick="seeReports('+x.image+')" data-target="#reports"><b>Reports</b></td><td><button type="button" class="btn btn-danger" ><b>X</b></button></td></tr>' + table.innerHTML;
+        table.innerHTML = '<tr><td>'+y+'</td><td><b>'+x.bookTitle+'</b></td><td>'+x.authorName+'</td><td><b>'+x.year+'</b></td><td>'+x.setQty+'</td><td>'+x.qty+'</td><td><b>'+parseInt(x.setQty - x.qty)+'</b></td><td><button type="button" class="btn btn-primary" data-toggle="modal" onclick="detailEdit('+x.image+')" data-target="#detailEdit"><b>Detail / Edit</b></button></td><td><button type="button" class="btn btn-outline-primary" data-toggle="modal" onclick="seeHistory('+x.image+')" data-target="#history"><b>History</b></button></td><td><button type="button" class="btn btn-warning" data-toggle="modal" onclick="seeReports('+x.image+')" data-target="#reports"><b>Reports</b></td><td><button type="button" data-toggle="modal" onclick="deleteBookShowModal('+x.image+')" data-target="#delete" class="btn btn-danger"><b>X</b></button></td></tr>' + table.innerHTML;
          
         }else{
           table.innerHTML = '<tr><td>'+y+'</td><td><b>'+x.bookTitle+'</b></td><td>'+x.authorName+'</td><td><b>'+x.year+'</b></td><td>'+x.setQty+'</td><td>'+x.qty+'</td><td><b>'+parseInt(x.setQty - x.qty)+'</b></td><td><button type="button" class="btn btn-primary" data-toggle="modal" onclick="detailEdit('+x.image+')" data-target="#detailEdit"><b>Detail / Edit</b></button></td><td><button type="button" class="btn btn-outline-primary" data-toggle="modal" onclick="seeHistory('+x.image+')" data-target="#history"><b>History</b></button></td><td><button type="button" class="btn btn-warning" data-toggle="modal" onclick="seeReports('+x.image+')" data-target="#reports"><b>Reports</b></td><td><button type="button" class="btn btn-danger" disabled><b>X</b></button></td></tr>' + table.innerHTML;
@@ -997,6 +999,7 @@ function editBook(bookTitleInMS){
   var setQty = 0
   var avQty = 0
   var bookStatus = ""
+  var publisher = document.getElementById('publisher');
 
   var status = document.getElementById('status');
   status.innerHTML = "Editing...";
@@ -1031,7 +1034,8 @@ function editBook(bookTitleInMS){
       max: parseInt(max.value),
       setQty: parseInt(qty.value),
       qty: newAvQty,
-      status: bookStatus
+      status: bookStatus,
+      publisher: publisher
     }).then(()=>{
       refUsers.orderByChild("uid").once('value', snapshot=>{
         snapshot.forEach(childSnapshot=>{
